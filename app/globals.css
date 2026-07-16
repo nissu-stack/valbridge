@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --obsidian: #0b0a08;
+  --panel: #141210;
+  --panel2: #1a1712;
+  --cream: #f6f1e6;
+  --cream-dim: #e7e0cf;
+  --gold: #c9962b;
+  --gold-bright: #e0b876;
+  --gold-dim: #8c6d3c;
+  --ink: #f6f1e6;
+  --mut: #9a9282;
+  --text-faint: #6b6558;
+  --line: rgba(246, 241, 230, 0.09);
+  --line-bright: rgba(201, 154, 86, 0.35);
+}
+
+body {
+  @apply antialiased;
+  background: var(--obsidian);
+  color: var(--cream);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+::selection {
+  background: rgba(201, 154, 86, 0.3);
+  color: var(--cream);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  color: inherit;
+}
+
+.font-display {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
