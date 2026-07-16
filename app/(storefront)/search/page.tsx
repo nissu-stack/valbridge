@@ -41,7 +41,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <p className="text-zinc-600">No results for &quot;{query}&quot;.</p>
         </header>
         <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-6 text-sm text-zinc-700">
-          Try checking your spelling, or browse our <Link href="/collections" className="font-medium text-zinc-950 underline">collections</Link>.
+          Try checking your spelling, or browse our <Link href="/shop" className="font-medium text-zinc-950 underline">shop</Link>.
         </div>
       </main>
     );

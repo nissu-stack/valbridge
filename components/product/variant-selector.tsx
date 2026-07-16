@@ -30,11 +30,11 @@ export function VariantSelector({ variants, options, onSelect }: VariantSelector
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {options.map((option) => (
-        <div key={option.name} className="space-y-2">
-          <p className="text-sm font-medium text-zinc-700">{option.name}</p>
-          <div className="flex flex-wrap gap-2">
+        <div key={option.name} className="space-y-3">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--gold-light)]">{option.name}</p>
+          <div className="flex flex-wrap gap-3">
             {option.values.map((value) => {
               const isSelected = selectedOptions[option.name] === value;
               const matchingVariant = variants.find((variant) =>
@@ -48,11 +48,13 @@ export function VariantSelector({ variants, options, onSelect }: VariantSelector
                   type="button"
                   onClick={() => handleSelect(option.name, value)}
                   disabled={!isAvailable}
-                  className={`rounded-full border px-3 py-2 text-sm transition ${
-                    isSelected ? "border-zinc-950 bg-zinc-950 text-white" : "border-zinc-300 text-zinc-700"
-                  } ${!isAvailable ? "cursor-not-allowed opacity-50" : "hover:border-zinc-950"}`}
+                  className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                    isSelected
+                      ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--obsidian)]"
+                      : "border-[var(--line)] bg-[rgba(255,255,255,0.04)] text-[var(--cream)] hover:border-[var(--gold)]"
+                  } ${!isAvailable ? "cursor-not-allowed opacity-50" : ""}`}
                 >
-                  {value} {!isAvailable ? "(Sold out)" : ""}
+                  {value} {!isAvailable ? " (Sold out)" : ""}
                 </button>
               );
             })}

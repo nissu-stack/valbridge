@@ -41,11 +41,11 @@ export function AddToCartButton({ selectedVariantId }: AddToCartButtonProps) {
         type="button"
         onClick={handleClick}
         disabled={isPending || !selectedVariantId}
-        className="inline-flex w-full items-center justify-center rounded-full bg-zinc-950 px-5 py-3 text-sm font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center rounded-full bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--obsidian)] transition hover:bg-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isPending ? "Adding..." : selectedVariantId ? "Add to cart" : "Select a variant"}
       </button>
-      {message ? <p className="text-sm text-zinc-600">{message}</p> : null}
+      {message ? <p className="text-sm text-[var(--gold-light)]">{message}</p> : null}
     </div>
   );
 }

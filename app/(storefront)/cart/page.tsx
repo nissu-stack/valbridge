@@ -32,15 +32,15 @@ export default async function CartPage() {
 
   if (!cart || cart.lines.nodes.length === 0) {
     return (
-      <main className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-[2rem] border border-zinc-200 bg-white p-8 text-center shadow-sm">
-          <Badge className="bg-zinc-100 text-zinc-700">Your bag</Badge>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-zinc-950">Your cart is ready when you are</h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-zinc-600 sm:text-base">
-            Save your favorites and continue shopping whenever you are ready.
+      <main className="mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-12 text-center shadow-[0_40px_140px_-90px_rgba(0,0,0,0.65)]">
+          <Badge className="mx-auto mb-6 inline-flex border-[var(--gold)] bg-[rgba(201,150,43,0.12)] text-[var(--gold-light)]">Your bag</Badge>
+          <h1 className="font-display text-[clamp(2.15rem,4vw,3.4rem)] uppercase tracking-[0.18em] text-[var(--gold-pale)]">Empty cart</h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[var(--mist)]">
+            Save your favorites for later and return to discover the finest olive oils, truffles, and gourmet pantry essentials.
           </p>
-          <Link href="/collections" className="mt-6 inline-flex">
-            <Button>Browse collections</Button>
+          <Link href="/shop" className="mt-10 inline-flex">
+            <Button className="rounded-full bg-[var(--gold)] px-12 py-3 text-[var(--obsidian)] hover:bg-[var(--gold-light)]">Browse shop</Button>
           </Link>
         </div>
       </main>
@@ -48,69 +48,77 @@ export default async function CartPage() {
   }
 
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
-      <header className="space-y-2">
-        <Badge className="bg-zinc-100 text-zinc-700">Your bag</Badge>
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-950">Your cart</h1>
-        <p className="text-sm text-zinc-600 sm:text-base">{cart.totalQuantity} item{cart.totalQuantity === 1 ? "" : "s"} saved for checkout.</p>
-      </header>
+    <main className="mx-auto min-h-screen max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+      <section className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-10 shadow-[0_40px_140px_-90px_rgba(0,0,0,0.65)]">
+        <Badge className="inline-flex border-[var(--gold)] bg-[rgba(201,150,43,0.12)] text-[var(--gold-light)]">Your bag</Badge>
+        <div className="mt-6 max-w-3xl">
+          <h1 className="font-display text-[clamp(2.25rem,4vw,3.75rem)] uppercase tracking-[0.18em] text-[var(--gold-pale)]">Cart</h1>
+          <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--mist)]">
+            {cart.totalQuantity} item{cart.totalQuantity === 1 ? "" : "s"} waiting for checkout. Review the selection, adjust quantities, and confirm your order before secure payment.
+          </p>
+        </div>
+      </section>
 
-      <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
-        <div className="space-y-4">
+      <div className="grid gap-8 lg:grid-cols-[1.55fr_0.85fr]">
+        <div className="space-y-5">
           {cart.lines.nodes.map((line) => (
-            <div key={line.id} className="flex flex-col gap-4 rounded-[1.5rem] border border-zinc-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
-              <div className="h-24 w-full overflow-hidden rounded-2xl bg-zinc-50 sm:w-24">
+            <div key={line.id} className="flex flex-col gap-5 rounded-[2rem] border border-[var(--line)] bg-[var(--panel2)] p-6 shadow-[0_24px_70px_-36px_rgba(0,0,0,0.45)] sm:flex-row sm:items-center">
+              <div className="h-28 w-full overflow-hidden rounded-[1.8rem] bg-[var(--panel)] sm:w-28">
                 {line.merchandise.image ? (
                   <Image
                     src={line.merchandise.image.url}
                     alt={line.merchandise.image.altText ?? line.merchandise.product.title}
                     width={240}
                     height={240}
-                    sizes="96px"
+                    sizes="112px"
                     className="h-full w-full object-cover"
                   />
                 ) : null}
               </div>
-              <div className="flex-1 space-y-3">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+
+              <div className="flex-1 space-y-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="font-medium text-zinc-950">{line.merchandise.product.title}</p>
-                    <p className="text-sm text-zinc-500">{line.merchandise.title}</p>
+                    <p className="text-xl font-semibold text-[var(--cream)]">{line.merchandise.product.title}</p>
+                    <p className="mt-2 text-sm uppercase tracking-[0.2em] text-[var(--gold-light)]">{line.merchandise.title}</p>
                   </div>
-                  <p className="text-sm font-semibold text-zinc-900">{line.merchandise.price.amount} {line.merchandise.price.currencyCode}</p>
+                  <p className="text-2xl font-semibold text-[var(--gold-light)]">{line.merchandise.price.amount} {line.merchandise.price.currencyCode}</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <form action={async () => {
-                    'use server';
-                    const result = await updateCartLine(line.id, line.quantity - 1);
-                    if (result.userErrors?.length) {
-                      return;
-                    }
-                    revalidatePath('/cart');
-                  }}>
-                    <button type="submit" className="rounded-full border border-zinc-300 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50">
-                      −
-                    </button>
-                  </form>
-                  <span className="min-w-8 text-center text-sm font-semibold text-zinc-900">{line.quantity}</span>
-                  <form action={async () => {
-                    'use server';
-                    const result = await updateCartLine(line.id, line.quantity + 1);
-                    if (result.userErrors?.length) {
-                      return;
-                    }
-                    revalidatePath('/cart');
-                  }}>
-                    <button type="submit" className="rounded-full border border-zinc-300 px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-50">
-                      +
-                    </button>
-                  </form>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-sm text-[var(--cream)]">
+                    <form action={async () => {
+                      'use server';
+                      const result = await updateCartLine(line.id, line.quantity - 1);
+                      if (result.userErrors?.length) {
+                        return;
+                      }
+                      revalidatePath('/cart');
+                    }}>
+                      <button type="submit" className="rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-sm text-[var(--cream)] transition hover:border-[var(--gold)] hover:bg-[rgba(201,150,43,0.08)]">
+                        −
+                      </button>
+                    </form>
+                    <span className="min-w-[2rem] text-center text-sm font-semibold text-[var(--cream)]">{line.quantity}</span>
+                    <form action={async () => {
+                      'use server';
+                      const result = await updateCartLine(line.id, line.quantity + 1);
+                      if (result.userErrors?.length) {
+                        return;
+                      }
+                      revalidatePath('/cart');
+                    }}>
+                      <button type="submit" className="rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-sm text-[var(--cream)] transition hover:border-[var(--gold)] hover:bg-[rgba(201,150,43,0.08)]">
+                        +
+                      </button>
+                    </form>
+                  </div>
                   <form action={async () => {
                     'use server';
                     await removeCartLine(line.id);
                     revalidatePath('/cart');
                   }}>
-                    <button type="submit" className="rounded-full border border-zinc-200 px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50">
+                    <button type="submit" className="rounded-full border border-[var(--gold)] bg-[var(--gold)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]">
                       Remove
                     </button>
                   </form>
@@ -120,26 +128,40 @@ export default async function CartPage() {
           ))}
         </div>
 
-        <aside className="rounded-[1.75rem] border border-zinc-200 bg-zinc-50 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-zinc-950">Order summary</h2>
-          <div className="mt-5 space-y-3 text-sm text-zinc-700">
-            <div className="flex items-center justify-between">
-              <span>Subtotal</span>
-              <span>{cart.cost.subtotalAmount.amount} {cart.cost.subtotalAmount.currencyCode}</span>
+        <aside className="space-y-6">
+          <div className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-8 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.55)]">
+            <h2 className="text-xl font-display uppercase tracking-[0.18em] text-[var(--gold-pale)]">Order summary</h2>
+            <div className="mt-6 space-y-4 text-sm text-[var(--mist)]">
+              <div className="flex items-center justify-between">
+                <span>Subtotal</span>
+                <span className="text-[var(--cream)]">{cart.cost.subtotalAmount.amount} {cart.cost.subtotalAmount.currencyCode}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Estimated tax</span>
+                <span className="text-[var(--cream)]">{cart.cost.totalTaxAmount?.amount ?? "0.00"} {cart.cost.totalTaxAmount?.currencyCode ?? cart.cost.subtotalAmount.currencyCode}</span>
+              </div>
             </div>
-            <div className="flex items-center justify-between">
-              <span>Estimated tax</span>
-              <span>{cart.cost.totalTaxAmount?.amount ?? "0.00"} {cart.cost.totalTaxAmount?.currencyCode ?? cart.cost.subtotalAmount.currencyCode}</span>
-            </div>
-            <div className="flex items-center justify-between border-t border-zinc-200 pt-3 text-base font-semibold text-zinc-950">
+            <div className="mt-6 flex items-center justify-between border-t border-[var(--line)] pt-4 text-xl font-semibold text-[var(--cream)]">
               <span>Total</span>
               <span>{cart.cost.totalAmount.amount} {cart.cost.totalAmount.currencyCode}</span>
             </div>
+            <a
+              href={cart.checkoutUrl}
+              className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-[var(--gold)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]"
+            >
+              Checkout securely
+            </a>
+            <p className="mt-4 text-center text-xs uppercase tracking-[0.22em] text-[var(--mut)]">
+              Secure payment through Shopify checkout
+            </p>
           </div>
-          <a href={cart.checkoutUrl} className="mt-6 block">
-            <Button className="w-full">Checkout securely</Button>
-            <p className="mt-2 text-center text-xs uppercase tracking-[0.2em] text-zinc-500">Redirecting to secure checkout</p>
-          </a>
+
+          <div className="rounded-[2.5rem] border border-[var(--line)] bg-[rgba(201,150,43,0.06)] p-6">
+            <p className="text-sm uppercase tracking-[0.28em] text-[var(--gold-light)]">Need help?</p>
+            <p className="mt-3 text-sm leading-7 text-[var(--cream)]">
+              Contact us for gift orders, wholesale support, or bespoke sourcing assistance.
+            </p>
+          </div>
         </aside>
       </div>
     </main>

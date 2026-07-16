@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, X } from "lucide-react";
 import type { Product } from "@/lib/shopify/types";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { addToCart } from "@/app/(storefront)/cart/actions";
-import { useCartDrawerStore } from "@/lib/cart/store";
+import { AddToCartButton } from "@/components/product/add-to-cart-button";
 
 type ProductGridProps = {
   products: Product[];
@@ -34,9 +33,6 @@ export function ProductGrid({ products }: ProductGridProps) {
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
-  const [isPending, setIsPending] = useState(false);
-  const [feedback, setFeedback] = useState<string | null>(null);
-  const openDrawer = useCartDrawerStore((state) => state.openDrawer);
 
   useEffect(() => {
     if (!activeProduct) {
@@ -55,44 +51,22 @@ export function ProductGrid({ products }: ProductGridProps) {
     setActiveProduct(product);
     setSelectedOptions(getInitialSelections(product));
     setSelectedVariantId(product.variants?.nodes[0]?.id ?? null);
-    setFeedback(null);
   };
 
   const handleClose = () => {
     setActiveProduct(null);
     setSelectedOptions({});
     setSelectedVariantId(null);
-    setFeedback(null);
   };
 
   const handleSelectOption = (name: string, value: string) => {
     setSelectedOptions((current) => ({ ...current, [name]: value }));
   };
 
-  const handleAddToCart = async () => {
-    if (!activeProduct || !selectedVariantId) {
-      setFeedback("Please select the available options before adding to cart.");
-      return;
-    }
-
-    setIsPending(true);
-    setFeedback(null);
-
-    const result = await addToCart(selectedVariantId, 1);
-    setIsPending(false);
-
-    if ("userErrors" in result && result.userErrors?.length) {
-      setFeedback(result.userErrors[0]?.message ?? "Unable to add to cart.");
-      return;
-    }
-
-    openDrawer();
-    setFeedback(`${activeProduct.title} added to your cart.`);
-  };
 
   return (
     <>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {products.map((product) => {
           const price = Number(product.priceRange.minVariantPrice.amount);
           const currency = product.priceRange.minVariantPrice.currencyCode;
@@ -131,9 +105,6 @@ export function ProductGrid({ products }: ProductGridProps) {
                   <div>
                     <div className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">Maison Valbridge</div>
                     <h2 className="font-display text-[17px] font-semibold leading-tight text-[var(--cream)]">{product.title}</h2>
-                    <p className="mt-2 text-sm leading-6 text-[var(--mut)] line-clamp-3">
-                      {getPlainText(product.descriptionHtml) || "A refined addition to your everyday rituals."}
-                    </p>
                   </div>
                   <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)]">
                     View details →
@@ -148,7 +119,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                   event.stopPropagation();
                   handleOpen(product);
                 }}
-                className="mx-5 mb-5 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--cream)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--obsidian)] transition hover:bg-[var(--gold-bright)]"
+                className="mx-5 mb-5 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--cream)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--obsidian)] transition duration-300 hover:bg-gradient-to-r hover:from-[var(--gold-light)] hover:via-[var(--gold)] hover:to-[var(--gold-deep)] hover:text-[var(--obsidian)] hover:shadow-[0_10px_35px_rgba(201,150,43,0.25)]"
               >
                 <ShoppingBag className="h-4 w-4" />
                 Quick add
@@ -237,16 +208,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                 ) : null}
 
                 <div className="space-y-3">
-                  <button
-                    type="button"
-                    onClick={handleAddToCart}
-                    disabled={isPending || !selectedVariantId}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--obsidian)] transition hover:bg-[var(--gold-bright)] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <ShoppingBag className="h-4 w-4" />
-                    {isPending ? "Adding..." : "Add to cart"}
-                  </button>
-                  {feedback ? <p className="text-sm text-[var(--mut)]">{feedback}</p> : null}
+                  <AddToCartButton selectedVariantId={selectedVariantId} />
                   <Link href={`/products/${activeProduct.handle}`} onClick={handleClose} className="inline-flex text-sm font-semibold uppercase tracking-[0.16em] text-[var(--gold-bright)]">
                     View full product →
                   </Link>

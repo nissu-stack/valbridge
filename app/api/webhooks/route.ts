@@ -37,11 +37,6 @@ export async function POST(request: NextRequest) {
       if (productHandle) {
         revalidatePath(`/products/${productHandle}`);
       }
-      revalidatePath("/collections");
-    }
-
-    if (topic === "collections/update" && collectionHandle) {
-      revalidatePath(`/collections/${collectionHandle}`);
     }
 
     return NextResponse.json({ ok: true }, { status: 200 });

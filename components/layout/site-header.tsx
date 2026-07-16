@@ -1,18 +1,12 @@
+import Image from "next/image";
 import Link from "next/link";
 import { CartIconButton } from "@/components/layout/cart-icon-button";
 import { CartDrawer } from "@/components/layout/cart-drawer";
-import { SearchBar } from "@/components/layout/search-bar";
 import { cookies } from "next/headers";
+import { NAV_LINKS } from "@/lib/config/navigation";
 import { shopifyClient } from "@/lib/shopify/client";
 import { CART_QUERY } from "@/lib/shopify/queries";
 import type { CartQueryData } from "@/lib/shopify/types";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/shop", label: "Shop" },
-  { href: "/collections", label: "Collections" },
-  { href: "/search", label: "Provenance" },
-];
 
 async function getCartForHeader() {
   const cookieStore = await cookies();
@@ -35,22 +29,27 @@ export async function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[rgba(11,10,8,0.72)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="font-display text-lg font-semibold tracking-[0.04em] text-[var(--gold-bright)] uppercase">
-            Maison Valbridge
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--line-soft)] bg-[rgba(10,10,10,0.86)] backdrop-blur-xl">
+        <div className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link href="/" className="flex items-center gap-3" aria-label="Valbridge Group">
+            <Image
+              src="/logo.jpeg"
+              alt="Valbridge Group logo"
+              width={180}
+              height={56}
+              className="h-14 w-auto object-contain"
+            />
           </Link>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-[var(--mut)] md:flex">
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="transition hover:text-[var(--cream)]">
+
+          <nav className="hidden items-center gap-7 text-[0.74rem] uppercase tracking-[0.24em] text-[var(--mist)] md:flex">
+            {NAV_LINKS.map((link) => (
+              <Link key={link.href} href={link.href} className="relative py-1 transition hover:text-[var(--gold-light)] after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-[var(--gold)] after:transition-all after:duration-300 hover:after:w-full">
                 {link.label}
               </Link>
             ))}
           </nav>
-          <div className="flex flex-1 items-center justify-end gap-3 md:max-w-xl">
-            <div className="hidden flex-1 md:block">
-              <SearchBar />
-            </div>
+
+          <div className="flex items-center gap-3">
             <CartIconButton initialCount={cart?.totalQuantity ?? 0} />
           </div>
         </div>

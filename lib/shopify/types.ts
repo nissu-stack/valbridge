@@ -53,6 +53,12 @@ export type Product = {
   images?: {
     nodes: Image[];
   } | null;
+  collections?: {
+    nodes: Array<{
+      handle: string;
+      title: string;
+    }>;
+  } | null;
   metafields?: Array<{
     key: string;
     namespace: string;
@@ -71,6 +77,8 @@ export type CollectionQueryData = {
     products: {
       pageInfo: {
         hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor?: string | null;
         endCursor?: string | null;
       };
       edges: Array<{

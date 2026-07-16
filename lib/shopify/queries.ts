@@ -24,6 +24,40 @@ export const ProductFragment = gql`
         currencyCode
       }
     }
+    options {
+      name
+      values
+    }
+    variants(first: 100) {
+      nodes {
+        id
+        selectedOptions {
+          name
+          value
+        }
+        price {
+          amount
+          currencyCode
+        }
+        compareAtPrice {
+          amount
+          currencyCode
+        }
+        availableForSale
+        image {
+          url
+          altText
+          width
+          height
+        }
+      }
+    }
+    collections(first: 5) {
+      nodes {
+        handle
+        title
+      }
+    }
     seo {
       title
       description
@@ -113,13 +147,15 @@ export const ALL_PRODUCT_HANDLES_QUERY = gql`
 // Consumed by the collection page with cursor-based pagination and optional sort.
 export const COLLECTION_QUERY = gql`
   ${ProductFragment}
-  query collectionByHandle($handle: String!, $first: Int!, $after: String, $sortKey: ProductCollectionSortKeys, $reverse: Boolean) {
+  query collectionByHandle($handle: String!, $first: Int, $after: String, $before: String, $last: Int, $sortKey: ProductCollectionSortKeys, $reverse: Boolean) {
     collection(handle: $handle) {
       title
       descriptionHtml
-      products(first: $first, after: $after, sortKey: $sortKey, reverse: $reverse) {
+      products(first: $first, after: $after, before: $before, last: $last, sortKey: $sortKey, reverse: $reverse) {
         pageInfo {
           hasNextPage
+          hasPreviousPage
+          startCursor
           endCursor
         }
         edges {
@@ -132,6 +168,23 @@ export const COLLECTION_QUERY = gql`
             }
           }
         }
+      }
+    }
+  }
+`;
+
+export const SHOP_PRODUCTS_QUERY = gql`
+  ${ProductFragment}
+  query shopProducts($first: Int, $after: String, $before: String, $last: Int, $sortKey: ProductSortKeys, $reverse: Boolean) {
+    products(first: $first, after: $after, before: $before, last: $last, sortKey: $sortKey, reverse: $reverse) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      nodes {
+        ...ProductFragment
       }
     }
   }
