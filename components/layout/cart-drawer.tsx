@@ -121,9 +121,21 @@ export function CartDrawer({ cart }: CartDrawerProps) {
                 <span>Subtotal</span>
                 <span className="font-semibold text-zinc-950">{cart?.cost.subtotalAmount.amount} {cart?.cost.subtotalAmount.currencyCode}</span>
               </div>
-              <Link href="/cart" onClick={closeDrawer} className="flex w-full items-center justify-center gap-2 rounded-full bg-zinc-950 px-4 py-3 text-sm font-medium text-white">
-                View cart and checkout <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="grid gap-3">
+                <Link
+                  href="/cart"
+                  onClick={closeDrawer}
+                  className="inline-flex w-full items-center justify-center rounded-full bg-zinc-950 px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[var(--gold)] hover:text-[var(--obsidian)]"
+                >
+                  View cart
+                </Link>
+                <a
+                  href={cart?.checkoutUrl}
+                  className="inline-flex w-full items-center justify-center rounded-full bg-zinc-950 px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[var(--gold)] hover:text-[var(--obsidian)]"
+                >
+                  Checkout
+                </a>
+              </div>
             </div>
           </>
         )}

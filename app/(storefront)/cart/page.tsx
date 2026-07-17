@@ -59,33 +59,30 @@ export default async function CartPage() {
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-[1.55fr_0.85fr]">
+      <div className="mt-10 grid gap-8 lg:grid-cols-[1.6fr_0.9fr]">
         <div className="space-y-5">
           {cart.lines.nodes.map((line) => (
-            <div key={line.id} className="flex flex-col gap-5 rounded-[2rem] border border-[var(--line)] bg-[var(--panel2)] p-6 shadow-[0_24px_70px_-36px_rgba(0,0,0,0.45)] sm:flex-row sm:items-center">
-              <div className="h-28 w-full overflow-hidden rounded-[1.8rem] bg-[var(--panel)] sm:w-28">
+            <div key={line.id} className="overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--panel2)] p-6 shadow-[0_24px_70px_-36px_rgba(0,0,0,0.45)] sm:grid sm:grid-cols-[120px_1fr] sm:gap-6">
+              <div className="h-28 w-full overflow-hidden rounded-[1.8rem] bg-[var(--panel)]">
                 {line.merchandise.image ? (
                   <Image
                     src={line.merchandise.image.url}
                     alt={line.merchandise.image.altText ?? line.merchandise.product.title}
                     width={240}
                     height={240}
-                    sizes="112px"
+                    sizes="120px"
                     className="h-full w-full object-cover"
                   />
                 ) : null}
               </div>
 
-              <div className="flex-1 space-y-4">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-xl font-semibold text-[var(--cream)]">{line.merchandise.product.title}</p>
-                    <p className="mt-2 text-sm uppercase tracking-[0.2em] text-[var(--gold-light)]">{line.merchandise.title}</p>
-                  </div>
-                  <p className="text-2xl font-semibold text-[var(--gold-light)]">{line.merchandise.price.amount} {line.merchandise.price.currencyCode}</p>
+              <div className="mt-5 flex flex-col justify-between gap-6 sm:mt-0">
+                <div>
+                  <p className="text-xl font-semibold text-[var(--cream)]">{line.merchandise.product.title}</p>
+                  <p className="mt-2 text-sm uppercase tracking-[0.2em] text-[var(--gold-light)]">{line.merchandise.title}</p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-sm text-[var(--cream)]">
                     <form action={async () => {
                       'use server';
@@ -113,15 +110,19 @@ export default async function CartPage() {
                       </button>
                     </form>
                   </div>
-                  <form action={async () => {
-                    'use server';
-                    await removeCartLine(line.id);
-                    revalidatePath('/cart');
-                  }}>
-                    <button type="submit" className="rounded-full border border-[var(--gold)] bg-[var(--gold)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]">
-                      Remove
-                    </button>
-                  </form>
+
+                  <div className="flex items-center justify-between gap-3 sm:justify-end">
+                    <p className="text-lg font-semibold text-[var(--gold-light)]">{line.merchandise.price.amount} {line.merchandise.price.currencyCode}</p>
+                    <form action={async () => {
+                      'use server';
+                      await removeCartLine(line.id);
+                      revalidatePath('/cart');
+                    }}>
+                      <button type="submit" className="rounded-full border border-[var(--gold)] bg-[var(--gold)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]">
+                        Remove
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -130,7 +131,11 @@ export default async function CartPage() {
 
         <aside className="space-y-6">
           <div className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-8 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.55)]">
-            <h2 className="text-xl font-display uppercase tracking-[0.18em] text-[var(--gold-pale)]">Order summary</h2>
+            <div className="flex items-center justify-between text-sm uppercase tracking-[0.18em] text-[var(--gold-light)]">
+              <span>Your order</span>
+              <span>{cart.totalQuantity} item{cart.totalQuantity === 1 ? "" : "s"}</span>
+            </div>
+
             <div className="mt-6 space-y-4 text-sm text-[var(--mist)]">
               <div className="flex items-center justify-between">
                 <span>Subtotal</span>
@@ -141,16 +146,24 @@ export default async function CartPage() {
                 <span className="text-[var(--cream)]">{cart.cost.totalTaxAmount?.amount ?? "0.00"} {cart.cost.totalTaxAmount?.currencyCode ?? cart.cost.subtotalAmount.currencyCode}</span>
               </div>
             </div>
+
             <div className="mt-6 flex items-center justify-between border-t border-[var(--line)] pt-4 text-xl font-semibold text-[var(--cream)]">
               <span>Total</span>
               <span>{cart.cost.totalAmount.amount} {cart.cost.totalAmount.currencyCode}</span>
             </div>
-            <a
-              href={cart.checkoutUrl}
-              className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-[var(--gold)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]"
-            >
-              Checkout securely
-            </a>
+
+            <div className="mt-8 grid gap-3">
+              <a
+                href={cart.checkoutUrl}
+                className="inline-flex w-full items-center justify-center rounded-full bg-[var(--gold)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]"
+              >
+                Checkout securely
+              </a>
+              <Link href="/shop" className="inline-flex w-full items-center justify-center rounded-full border border-[var(--line)] bg-white px-5 py-3 text-sm font-semibold text-[var(--ink)] transition hover:bg-zinc-50">
+                Continue shopping
+              </Link>
+            </div>
+
             <p className="mt-4 text-center text-xs uppercase tracking-[0.22em] text-[var(--mut)]">
               Secure payment through Shopify checkout
             </p>
