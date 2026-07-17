@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/lib/shopify/types";
 
@@ -20,21 +21,14 @@ export function HomeHeroSection({ siteName }: HomeHeroSectionProps) {
         <circle cx="620" cy="250" r="3" fill="rgba(232,195,106,0.55)" />
       </svg>
       <div className="relative z-10 mx-auto flex min-h-[calc(100svh-240px)] max-w-[900px] flex-col items-center justify-center">
-        <svg className="mx-auto mb-[26px] h-[110px] w-[120px] drop-shadow-[0_0_32px_rgba(201,150,43,0.45)]" viewBox="0 0 120 110" fill="none" aria-hidden="true">
-          <path d="M8 6 L60 104 L112 6" stroke="url(#gh)" strokeWidth="9" fill="none" />
-          <path d="M24 38 Q60 12 96 38" stroke="url(#gh)" strokeWidth="3.4" fill="none" />
-          <line x1="36" y1="27" x2="36" y2="41" stroke="#C9962B" strokeWidth="2" />
-          <line x1="60" y1="20" x2="60" y2="44" stroke="#C9962B" strokeWidth="2" />
-          <line x1="84" y1="27" x2="84" y2="41" stroke="#C9962B" strokeWidth="2" />
-          <path d="M42 62 Q56 74 50 88 Q47 96 54 102" stroke="#C9962B" strokeWidth="2.6" fill="none" />
-          <defs>
-            <linearGradient id="gh" x1="0" y1="0" x2="120" y2="110">
-              <stop stopColor="#F3E3B8" />
-              <stop offset="0.5" stopColor="#C9962B" />
-              <stop offset="1" stopColor="#8F6A1D" />
-            </linearGradient>
-          </defs>
-        </svg>
+        <Image
+          src="/logo.png"
+          alt={`${siteName} logo`}
+          width={120}
+          height={110}
+          priority
+          className="mx-auto mb-[26px] h-[110px] w-[120px] object-contain drop-shadow-[0_0_32px_rgba(201,150,43,0.45)]"
+        />
         <h1 className="font-display text-[clamp(2.1rem,6.4vw,4.4rem)] uppercase leading-[1.14] tracking-[0.22em] bg-gradient-to-b from-[var(--gold-pale)] via-[var(--gold-light)] to-[var(--gold-deep)] bg-clip-text text-transparent">
           {siteName}
         </h1>
