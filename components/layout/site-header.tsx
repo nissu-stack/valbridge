@@ -39,9 +39,6 @@ export async function SiteHeader() {
               height={56}
               className="h-14 w-auto object-contain"
             />
-            <span className="font-serif text-lg tracking-wide text-[var(--porcelain)] sm:text-xl">
-              Valbridge Group
-            </span>
           </Link>
 
           <nav className="hidden items-center gap-7 text-[0.74rem] uppercase tracking-[0.24em] text-[var(--mist)] md:flex">
