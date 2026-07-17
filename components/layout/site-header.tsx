@@ -33,12 +33,15 @@ export async function SiteHeader() {
         <div className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3" aria-label="Valbridge Group">
             <Image
-              src="/logo.jpeg"
+              src="/logo.png"
               alt="Valbridge Group logo"
               width={180}
               height={56}
               className="h-14 w-auto object-contain"
             />
+            <span className="font-serif text-lg tracking-wide text-[var(--porcelain)] sm:text-xl">
+              Valbridge Group
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-7 text-[0.74rem] uppercase tracking-[0.24em] text-[var(--mist)] md:flex">

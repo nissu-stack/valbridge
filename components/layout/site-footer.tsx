@@ -8,7 +8,7 @@ export function SiteFooter() {
         <div>
           <Link href="/" className="inline-flex items-center">
             <Image
-              src="/logo.jpeg"
+              src="/logo.png"
               alt="Valbridge Group logo"
               width={180}
               height={56}
