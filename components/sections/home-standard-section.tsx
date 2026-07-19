@@ -46,7 +46,7 @@ export function HomeStandardSection() {
           <p className="mx-auto mt-5 max-w-[640px] font-serif text-[1.2rem] italic text-[var(--mist)]">
             Daily pricing, reliable availability in season and a complete product line for your menu or your shelf.
           </p>
-          <Link href="/shop" className="mt-9 inline-block bg-[linear-gradient(135deg,var(--gold-deep),var(--gold)_45%,var(--gold-light))] px-[38px] py-[16px] text-[0.8rem] font-semibold uppercase tracking-[0.28em] text-[var(--obsidian)] transition duration-300 hover:-translate-y-[1px] hover:shadow-[0_6px_30px_rgba(201,150,43,0.45)]">
+          <Link href="/wholesale" className="mt-9 inline-block bg-[linear-gradient(135deg,var(--gold-deep),var(--gold)_45%,var(--gold-light))] px-[38px] py-[16px] text-[0.8rem] font-semibold uppercase tracking-[0.28em] text-[var(--obsidian)] transition duration-300 hover:-translate-y-[1px] hover:shadow-[0_6px_30px_rgba(201,150,43,0.45)]">
             Request price list
           </Link>
         </div>

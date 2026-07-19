@@ -6,5 +6,9 @@ dist/
 .env
 .env.local
 *.log
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
 .DS_Store
 node_modules

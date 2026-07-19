@@ -3,7 +3,7 @@ import { HomeHeroSection } from "@/components/sections/home-hero-section";
 import { HomeOriginMarquee } from "@/components/sections/home-origin-marquee";
 import { HomeProductShowcase } from "@/components/sections/home-product-showcase";
 import { HomeStandardSection } from "@/components/sections/home-standard-section";
-import { HOME_FOCUS_CARDS, HOME_FEATURED_ORIGINS, HOME_TRUST_ITEMS } from "@/lib/content/home";
+import { HOME_FEATURED_ORIGINS } from "@/lib/content/home";
 import { shopifyClient } from "@/lib/shopify/client";
 import { HOMEPAGE_PRODUCTS_QUERY } from "@/lib/shopify/queries";
 import type { Product } from "@/lib/shopify/types";
@@ -16,15 +16,15 @@ type HomePageProductsQueryData = {
   };
 };
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+export default async function HomePage() {
   const data = await shopifyClient.request<HomePageProductsQueryData>(HOMEPAGE_PRODUCTS_QUERY, { first: 24 });
   const allProducts = data.products.nodes;
   const heroProduct = allProducts[0];
 
   return (
-    <main className="flex min-h-screen flex-col">
+    <main id="main-content" className="flex min-h-screen flex-col">
       <HomeHeroSection siteName={siteName} heroProduct={heroProduct} />
-      <HomeBenefitsSection focusCards={HOME_FOCUS_CARDS} />
+      <HomeBenefitsSection />
       <HomeOriginMarquee featuredOrigins={HOME_FEATURED_ORIGINS} />
       <HomeProductShowcase products={allProducts} />
       <HomeStandardSection />

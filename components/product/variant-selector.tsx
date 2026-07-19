@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ProductOption, ProductVariant } from "@/lib/shopify/types";
+import { findAvailableVariant, getInitialVariantSelection, isOptionValueAvailable } from "@/lib/shopify/variants";
 
 type VariantSelectorProps = {
   variants: ProductVariant[];
@@ -10,20 +11,20 @@ type VariantSelectorProps = {
 };
 
 export function VariantSelector({ variants, options, onSelect }: VariantSelectorProps) {
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(
+    () => getInitialVariantSelection(variants, options).selections,
+  );
 
   useEffect(() => {
     if (options.length === 0) {
-      onSelect(null);
+      onSelect(getInitialVariantSelection(variants, options).variant?.id ?? null);
       return;
     }
 
-    const selectedVariant = variants.find((variant) =>
-      variant.selectedOptions.every((option) => selectedOptions[option.name] === option.value),
-    );
+    const selectedVariant = findAvailableVariant(variants, selectedOptions);
 
     onSelect(selectedVariant?.id ?? null);
-  }, [onSelect, options.length, selectedOptions, variants]);
+  }, [onSelect, options, selectedOptions, variants]);
 
   const handleSelect = (name: string, value: string) => {
     setSelectedOptions((current) => ({ ...current, [name]: value }));
@@ -37,10 +38,7 @@ export function VariantSelector({ variants, options, onSelect }: VariantSelector
           <div className="flex flex-wrap gap-3">
             {option.values.map((value) => {
               const isSelected = selectedOptions[option.name] === value;
-              const matchingVariant = variants.find((variant) =>
-                variant.selectedOptions.some((variantOption) => variantOption.name === option.name && variantOption.value === value),
-              );
-              const isAvailable = matchingVariant?.availableForSale ?? true;
+              const isAvailable = isOptionValueAvailable(variants, selectedOptions, option.name, value);
 
               return (
                 <button
@@ -48,6 +46,7 @@ export function VariantSelector({ variants, options, onSelect }: VariantSelector
                   type="button"
                   onClick={() => handleSelect(option.name, value)}
                   disabled={!isAvailable}
+                  aria-pressed={isSelected}
                   className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
                     isSelected
                       ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--obsidian)]"

@@ -4,8 +4,12 @@ import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductPurchasePanel } from "@/components/product/product-purchase-panel";
 import { Badge } from "@/components/ui/badge";
 import { shopifyClient } from "@/lib/shopify/client";
-import { ALL_PRODUCT_HANDLES_QUERY, PRODUCT_QUERY } from "@/lib/shopify/queries";
-import type { ProductHandlesQueryData, ProductQueryData } from "@/lib/shopify/types";
+import { ALL_PRODUCT_HANDLES_QUERY } from "@/lib/shopify/queries";
+import type { ProductHandlesQueryData } from "@/lib/shopify/types";
+import { formatMoney } from "@/lib/format";
+import { absoluteUrl } from "@/lib/config/site";
+import { getProductByHandle } from "@/lib/shopify/data";
+import sanitizeHtml from "sanitize-html";
 
 export const revalidate = 3600;
 
@@ -19,8 +23,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }): Promise<Metadata> {
   const { handle } = await params;
-  const data = await shopifyClient.request<ProductQueryData>(PRODUCT_QUERY, { handle });
-  const product = data.product;
+  const product = await getProductByHandle(handle);
 
   if (!product) {
     return {
@@ -28,58 +31,63 @@ export async function generateMetadata({ params }: { params: Promise<{ handle: s
     };
   }
 
-  const description = product.seo?.description ?? product.descriptionHtml?.replace(/<[^>]+>/g, "").trim().slice(0, 160) ?? "";
+  const description = product.seo?.description ?? sanitizeHtml(product.descriptionHtml ?? "", { allowedTags: [], allowedAttributes: {} }).trim().slice(0, 160);
   const title = product.seo?.title ?? product.title;
 
   return {
     title,
     description,
+    alternates: { canonical: `/products/${product.handle}` },
     openGraph: {
       title,
       description,
       images: product.featuredImage?.url ? [product.featuredImage.url] : [],
+      url: `/products/${product.handle}`,
     },
   };
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;
-  const data = await shopifyClient.request<ProductQueryData>(PRODUCT_QUERY, { handle });
-  const product = data.product;
+  const product = await getProductByHandle(handle);
 
   if (!product) {
     notFound();
   }
 
   const primaryPrice = product.priceRange.minVariantPrice.amount;
-  const priceLabel = `${product.priceRange.minVariantPrice.amount} ${product.priceRange.minVariantPrice.currencyCode}`;
+  const safeDescriptionHtml = sanitizeHtml(product.descriptionHtml ?? "", {
+    allowedTags: ["p", "br", "strong", "em", "ul", "ol", "li", "h2", "h3", "h4", "blockquote", "a"],
+    allowedAttributes: { a: ["href", "title", "target", "rel"] },
+    allowedSchemes: ["https", "http", "mailto"],
+    transformTags: { a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }) },
+  });
+  const priceLabel = formatMoney(product.priceRange.minVariantPrice);
   const hasMultiplePrices = product.priceRange.minVariantPrice.amount !== product.priceRange.maxVariantPrice.amount;
   const formattedPrice = hasMultiplePrices
-    ? `${product.priceRange.minVariantPrice.amount} - ${product.priceRange.maxVariantPrice.amount} ${product.priceRange.maxVariantPrice.currencyCode}`
+    ? `${formatMoney(product.priceRange.minVariantPrice)} – ${formatMoney(product.priceRange.maxVariantPrice)}`
     : priceLabel;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
-    description: product.descriptionHtml?.replace(/<[^>]+>/g, "").trim() ?? "",
+    description: sanitizeHtml(product.descriptionHtml ?? "", { allowedTags: [], allowedAttributes: {} }).trim(),
     image: product.featuredImage?.url ? [product.featuredImage.url] : [],
     offers: {
       "@type": "Offer",
       availability: product.availableForSale ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       price: primaryPrice,
       priceCurrency: product.priceRange.minVariantPrice.currencyCode,
-      url: `https://${process.env.SHOPIFY_STORE_DOMAIN}/products/${product.handle}`,
+      url: absoluteUrl(`/products/${product.handle}`),
     },
   };
 
   const galleryImages = product.images?.nodes?.length ? product.images.nodes : product.featuredImage ? [product.featuredImage] : [];
-  const hasCompareAtPrice = Boolean(product.variants?.nodes?.some((variant) => variant.compareAtPrice));
-  const compareAtPrice = product.variants?.nodes?.find((variant) => variant.compareAtPrice)?.compareAtPrice;
 
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-10 px-4 pt-16 pb-10 sm:px-6 sm:pt-20 lg:px-8 lg:pt-24">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <main id="main-content" className="mx-auto flex max-w-7xl flex-col gap-10 px-4 pt-16 pb-10 sm:px-6 sm:pt-20 lg:px-8 lg:pt-24">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="grid gap-8 lg:grid-cols-[1.4fr_0.9fr] lg:gap-14">
         <div className="space-y-6">
           <ProductGallery images={galleryImages} title={product.title} />
@@ -97,9 +105,6 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <p className="text-4xl font-semibold tracking-tight text-[var(--cream)]">{formattedPrice}</p>
-                {hasCompareAtPrice && compareAtPrice ? (
-                  <span className="text-sm uppercase tracking-[0.22em] text-[var(--mut)] line-through">{compareAtPrice.amount} {compareAtPrice.currencyCode}</span>
-                ) : null}
               </div>
               <p className="text-sm leading-7 text-[var(--mist)]">
                 Experience premium ingredients sourced from Europe’s most celebrated terroirs. Crafted for table service and fine gift-giving.
@@ -117,7 +122,7 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
             <h2 className="text-2xl font-semibold tracking-tight text-[var(--cream)]">Product details</h2>
-            <div className="mt-5 prose prose-sm max-w-none text-[var(--mist)]" dangerouslySetInnerHTML={{ __html: product.descriptionHtml ?? "" }} />
+            <div className="mt-5 prose prose-sm max-w-none text-[var(--mist)]" dangerouslySetInnerHTML={{ __html: safeDescriptionHtml }} />
           </div>
           <div className="space-y-6 rounded-[1.75rem] border border-[var(--gold)] bg-[rgba(201,150,43,0.06)] p-6">
             <div>
@@ -144,9 +149,6 @@ export default async function ProductPage({ params }: { params: Promise<{ handle
         </div>
       </section>
 
-      <div className="sticky bottom-0 z-20 border-t border-zinc-200 bg-white/95 px-4 py-3 backdrop-blur sm:hidden">
-        <ProductPurchasePanel variants={product.variants?.nodes ?? []} options={product.options ?? []} compact />
-      </div>
     </main>
   );
 }

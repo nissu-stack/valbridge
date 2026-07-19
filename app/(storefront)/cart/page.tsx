@@ -1,38 +1,25 @@
-import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
-import { revalidatePath } from "next/cache";
-import { shopifyClient } from "@/lib/shopify/client";
-import { CART_QUERY } from "@/lib/shopify/queries";
-import { removeCartLine, updateCartLine } from "@/app/(storefront)/cart/actions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import type { CartQueryData } from "@/lib/shopify/types";
+import { formatMoney } from "@/lib/format";
+import type { Metadata } from "next";
+import { getCartFromCookies } from "@/lib/shopify/cart";
+import { CartLineControls } from "@/components/cart/cart-line-controls";
+
+export const metadata: Metadata = {
+  title: "Cart",
+  robots: { index: false, follow: false },
+};
 
 export const dynamic = "force-dynamic";
 
-async function getCartFromShopify() {
-  const cookieStore = await cookies();
-  const cartId = cookieStore.get("cartId")?.value;
-
-  if (!cartId) {
-    return null;
-  }
-
-  try {
-    const data = await shopifyClient.request<CartQueryData>(CART_QUERY, { cartId });
-    return data.cart;
-  } catch {
-    return null;
-  }
-}
-
 export default async function CartPage() {
-  const cart = await getCartFromShopify();
+  const cart = await getCartFromCookies();
 
   if (!cart || cart.lines.nodes.length === 0) {
     return (
-      <main className="mx-auto min-h-screen max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+      <main id="main-content" className="mx-auto min-h-screen max-w-5xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
         <div className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-12 text-center shadow-[0_40px_140px_-90px_rgba(0,0,0,0.65)]">
           <Badge className="mx-auto mb-6 inline-flex border-[var(--gold)] bg-[rgba(201,150,43,0.12)] text-[var(--gold-light)]">Your bag</Badge>
           <h1 className="font-display text-[clamp(2.15rem,4vw,3.4rem)] uppercase tracking-[0.18em] text-[var(--gold-pale)]">Empty cart</h1>
@@ -48,7 +35,7 @@ export default async function CartPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+    <main id="main-content" className="mx-auto min-h-screen max-w-6xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
       <section className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-10 shadow-[0_40px_140px_-90px_rgba(0,0,0,0.65)]">
         <Badge className="inline-flex border-[var(--gold)] bg-[rgba(201,150,43,0.12)] text-[var(--gold-light)]">Your bag</Badge>
         <div className="mt-6 max-w-3xl">
@@ -83,45 +70,10 @@ export default async function CartPage() {
                 </div>
 
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-sm text-[var(--cream)]">
-                    <form action={async () => {
-                      'use server';
-                      const result = await updateCartLine(line.id, line.quantity - 1);
-                      if (result.userErrors?.length) {
-                        return;
-                      }
-                      revalidatePath('/cart');
-                    }}>
-                      <button type="submit" className="rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-sm text-[var(--cream)] transition hover:border-[var(--gold)] hover:bg-[rgba(201,150,43,0.08)]">
-                        −
-                      </button>
-                    </form>
-                    <span className="min-w-[2rem] text-center text-sm font-semibold text-[var(--cream)]">{line.quantity}</span>
-                    <form action={async () => {
-                      'use server';
-                      const result = await updateCartLine(line.id, line.quantity + 1);
-                      if (result.userErrors?.length) {
-                        return;
-                      }
-                      revalidatePath('/cart');
-                    }}>
-                      <button type="submit" className="rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.05)] px-3 py-2 text-sm text-[var(--cream)] transition hover:border-[var(--gold)] hover:bg-[rgba(201,150,43,0.08)]">
-                        +
-                      </button>
-                    </form>
-                  </div>
+                  <CartLineControls lineId={line.id} quantity={line.quantity} />
 
                   <div className="flex items-center justify-between gap-3 sm:justify-end">
-                    <p className="text-lg font-semibold text-[var(--gold-light)]">{line.merchandise.price.amount} {line.merchandise.price.currencyCode}</p>
-                    <form action={async () => {
-                      'use server';
-                      await removeCartLine(line.id);
-                      revalidatePath('/cart');
-                    }}>
-                      <button type="submit" className="rounded-full border border-[var(--gold)] bg-[var(--gold)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]">
-                        Remove
-                      </button>
-                    </form>
+                    <p className="text-lg font-semibold text-[var(--gold-light)]">{formatMoney({ amount: String(Number(line.merchandise.price.amount) * line.quantity), currencyCode: line.merchandise.price.currencyCode })}</p>
                   </div>
                 </div>
               </div>
@@ -139,17 +91,17 @@ export default async function CartPage() {
             <div className="mt-6 space-y-4 text-sm text-[var(--mist)]">
               <div className="flex items-center justify-between">
                 <span>Subtotal</span>
-                <span className="text-[var(--cream)]">{cart.cost.subtotalAmount.amount} {cart.cost.subtotalAmount.currencyCode}</span>
+                <span className="text-[var(--cream)]">{formatMoney(cart.cost.subtotalAmount)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Estimated tax</span>
-                <span className="text-[var(--cream)]">{cart.cost.totalTaxAmount?.amount ?? "0.00"} {cart.cost.totalTaxAmount?.currencyCode ?? cart.cost.subtotalAmount.currencyCode}</span>
+                <span className="text-[var(--cream)]">{formatMoney(cart.cost.totalTaxAmount ?? { amount: "0", currencyCode: cart.cost.subtotalAmount.currencyCode })}</span>
               </div>
             </div>
 
             <div className="mt-6 flex items-center justify-between border-t border-[var(--line)] pt-4 text-xl font-semibold text-[var(--cream)]">
               <span>Total</span>
-              <span>{cart.cost.totalAmount.amount} {cart.cost.totalAmount.currencyCode}</span>
+              <span>{formatMoney(cart.cost.totalAmount)}</span>
             </div>
 
             <div className="mt-8 grid gap-3">

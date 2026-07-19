@@ -1,32 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
 import { VariantSelector } from "@/components/product/variant-selector";
 import type { ProductOption, ProductVariant } from "@/lib/shopify/types";
+import { getFirstAvailableVariant } from "@/lib/shopify/variants";
+import { formatMoney } from "@/lib/format";
 
 type ProductPurchasePanelProps = {
   variants: ProductVariant[];
   options: ProductOption[];
-  compact?: boolean;
 };
 
-export function ProductPurchasePanel({ variants, options, compact = false }: ProductPurchasePanelProps) {
-  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!variants.length) {
-      setSelectedVariantId(null);
-      return;
-    }
-
-    const fallbackVariant = variants.find((variant) => variant.availableForSale) ?? variants[0];
-    setSelectedVariantId(fallbackVariant?.id ?? null);
-  }, [variants]);
+export function ProductPurchasePanel({ variants, options }: ProductPurchasePanelProps) {
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(() => getFirstAvailableVariant(variants)?.id ?? null);
+  const selectedVariant = variants.find((variant) => variant.id === selectedVariantId) ?? null;
 
   return (
-    <div className={compact ? "space-y-2" : "space-y-4"}>
-      {!compact ? <VariantSelector variants={variants} options={options} onSelect={setSelectedVariantId} /> : null}
+    <div className="space-y-4">
+      <VariantSelector variants={variants} options={options} onSelect={setSelectedVariantId} />
+      {selectedVariant ? (
+        <div className="flex flex-wrap items-center gap-3 text-sm" aria-live="polite">
+          <span className="font-semibold text-[var(--gold-light)]">{formatMoney(selectedVariant.price)}</span>
+          {selectedVariant.compareAtPrice ? (
+            <span className="text-[var(--mut)] line-through">{formatMoney(selectedVariant.compareAtPrice)}</span>
+          ) : null}
+        </div>
+      ) : null}
       <AddToCartButton selectedVariantId={selectedVariantId} />
     </div>
   );

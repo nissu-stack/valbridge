@@ -48,7 +48,7 @@ export function HomeHeroSection({ siteName }: HomeHeroSectionProps) {
           <Link href="/shop" className="gold-btn inline-block rounded-none transition duration-300 hover:-translate-y-[1px]">
             Shop now
           </Link>
-          <Link href="/search" className="ghost-btn inline-block transition duration-300 hover:-translate-y-[1px]">
+          <Link href="/wholesale" className="ghost-btn inline-block transition duration-300 hover:-translate-y-[1px]">
             Wholesale inquiry
           </Link>
         </div>

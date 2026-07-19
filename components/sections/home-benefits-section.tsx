@@ -1,11 +1,4 @@
-import Link from "next/link";
-import type { HomeFocusCard } from "@/lib/content/home";
-
-type HomeBenefitsSectionProps = {
-  focusCards: HomeFocusCard[];
-};
-
-export function HomeBenefitsSection({ focusCards }: HomeBenefitsSectionProps) {
+export function HomeBenefitsSection() {
   return (
     <section className="border-y border-[var(--line-soft)] bg-[var(--coal)]">
       <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-px md:grid-cols-2 lg:grid-cols-4">

@@ -1,62 +1,73 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingBag, X } from "lucide-react";
 import type { Product } from "@/lib/shopify/types";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
+import { findAvailableVariant, getInitialVariantSelection, isOptionValueAvailable } from "@/lib/shopify/variants";
+import { formatMoneyAmount } from "@/lib/format";
 
 type ProductGridProps = {
   products: Product[];
 };
 
-function formatPrice(amount: string, currency: string) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(Number(amount));
-}
-
-function getPlainText(value?: string | null) {
-  return value ? value.replace(/<[^>]+>/g, "").trim() : "";
-}
-
-function getInitialSelections(product: Product) {
-  return Object.fromEntries((product.options ?? []).map((option) => [option.name, option.values[0] ?? ""]));
-}
-
 export function ProductGrid({ products }: ProductGridProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const modalCloseRef = useRef<HTMLButtonElement>(null);
+  const quickAddTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
-  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
+  const selectedVariantId = activeProduct
+    ? findAvailableVariant(activeProduct.variants?.nodes ?? [], selectedOptions)?.id ?? null
+    : null;
 
   useEffect(() => {
-    if (!activeProduct) {
-      setSelectedVariantId(null);
-      return;
-    }
+    if (!activeProduct) return;
 
-    const matchingVariant = activeProduct.variants?.nodes.find((variant) =>
-      variant.selectedOptions.every((option) => selectedOptions[option.name] === option.value),
-    );
+    modalCloseRef.current?.focus();
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setActiveProduct(null);
+        return;
+      }
 
-    setSelectedVariantId(matchingVariant?.id ?? null);
-  }, [activeProduct, selectedOptions]);
+      if (event.key === "Tab") {
+        const focusable = modalRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
 
-  const handleOpen = (product: Product) => {
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+      quickAddTriggerRef.current?.focus();
+    };
+  }, [activeProduct]);
+
+  const handleOpen = (product: Product, trigger: HTMLButtonElement) => {
+    const initial = getInitialVariantSelection(product.variants?.nodes ?? [], product.options ?? []);
+    quickAddTriggerRef.current = trigger;
     setActiveProduct(product);
-    setSelectedOptions(getInitialSelections(product));
-    setSelectedVariantId(product.variants?.nodes[0]?.id ?? null);
+    setSelectedOptions(initial.selections);
   };
 
   const handleClose = () => {
     setActiveProduct(null);
     setSelectedOptions({});
-    setSelectedVariantId(null);
   };
 
   const handleSelectOption = (name: string, value: string) => {
@@ -68,9 +79,8 @@ export function ProductGrid({ products }: ProductGridProps) {
     <>
       <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {products.map((product) => {
-          const price = Number(product.priceRange.minVariantPrice.amount);
           const currency = product.priceRange.minVariantPrice.currencyCode;
-          const formattedPrice = formatPrice(product.priceRange.minVariantPrice.amount, currency);
+          const formattedPrice = formatMoneyAmount(product.priceRange.minVariantPrice.amount, currency);
 
           return (
             <div
@@ -117,7 +127,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
-                  handleOpen(product);
+                  handleOpen(product, event.currentTarget);
                 }}
                 className="mx-5 mb-5 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--cream)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--obsidian)] transition duration-300 hover:bg-gradient-to-r hover:from-[var(--gold-light)] hover:via-[var(--gold)] hover:to-[var(--gold-deep)] hover:text-[var(--obsidian)] hover:shadow-[0_10px_35px_rgba(201,150,43,0.25)]"
               >
@@ -131,13 +141,13 @@ export function ProductGrid({ products }: ProductGridProps) {
 
       {activeProduct ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={handleClose}>
-          <div className="w-full max-w-2xl rounded-[24px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div ref={modalRef} role="dialog" aria-modal="true" aria-labelledby="quick-add-title" className="w-full max-w-2xl rounded-[24px] border border-[var(--line)] bg-[var(--panel)] p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-faint)]">Quick add</p>
-                <h3 className="font-display mt-2 text-[24px] font-semibold text-[var(--cream)]">{activeProduct.title}</h3>
+                <h3 id="quick-add-title" className="font-display mt-2 text-[24px] font-semibold text-[var(--cream)]">{activeProduct.title}</h3>
               </div>
-              <button type="button" onClick={handleClose} className="rounded-full border border-[var(--line)] p-2 text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--cream)]">
+              <button ref={modalCloseRef} type="button" onClick={handleClose} className="rounded-full border border-[var(--line)] p-2 text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--cream)]" aria-label="Close quick add">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -166,9 +176,9 @@ export function ProductGrid({ products }: ProductGridProps) {
                       {selectedVariantId ? (() => {
                         const selectedVariant = activeProduct.variants?.nodes.find((variant) => variant.id === selectedVariantId);
                         return selectedVariant
-                          ? formatPrice(selectedVariant.price.amount, selectedVariant.price.currencyCode)
-                          : formatPrice(activeProduct.priceRange.minVariantPrice.amount, activeProduct.priceRange.minVariantPrice.currencyCode);
-                      })() : formatPrice(activeProduct.priceRange.minVariantPrice.amount, activeProduct.priceRange.minVariantPrice.currencyCode)}
+                          ? formatMoneyAmount(selectedVariant.price.amount, selectedVariant.price.currencyCode)
+                          : formatMoneyAmount(activeProduct.priceRange.minVariantPrice.amount, activeProduct.priceRange.minVariantPrice.currencyCode);
+                      })() : formatMoneyAmount(activeProduct.priceRange.minVariantPrice.amount, activeProduct.priceRange.minVariantPrice.currencyCode)}
                     </p>
                   </div>
                   <p className="mt-2 text-sm text-[var(--mut)]">
@@ -190,14 +200,22 @@ export function ProductGrid({ products }: ProductGridProps) {
                         <div className="flex flex-wrap gap-2">
                           {option.values.map((value) => {
                             const isSelected = selectedOptions[option.name] === value;
+                            const isAvailable = isOptionValueAvailable(
+                              activeProduct.variants?.nodes ?? [],
+                              selectedOptions,
+                              option.name,
+                              value,
+                            );
                             return (
                               <button
                                 key={value}
                                 type="button"
                                 onClick={() => handleSelectOption(option.name, value)}
-                                className={`rounded-full border px-3 py-2 text-sm transition ${isSelected ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--obsidian)]" : "border-[var(--line)] text-[var(--mut)] hover:border-[var(--gold)] hover:text-[var(--cream)]"}`}
+                                disabled={!isAvailable}
+                                aria-pressed={isSelected}
+                                className={`rounded-full border px-3 py-2 text-sm transition ${isSelected ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--obsidian)]" : "border-[var(--line)] text-[var(--mut)] hover:border-[var(--gold)] hover:text-[var(--cream)]"} disabled:cursor-not-allowed disabled:opacity-45`}
                               >
-                                {value}
+                                {value}{!isAvailable ? " (Sold out)" : ""}
                               </button>
                             );
                           })}

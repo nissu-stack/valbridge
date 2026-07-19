@@ -27,6 +27,17 @@
 - Each registered webhook shows recent successful deliveries in Shopify Admin.
 - Webhooks are tested with a live product, inventory, or collection update.
 
+## Legal and company information
+- Imprint contains the registered legal entity, address, registration/VAT details, representative, and contact information.
+- Terms, privacy, shipping, and refund pages have been approved for every target market.
+- Cookie consent and analytics behavior have been reviewed against applicable privacy requirements.
+
+## Engineering quality
+- `npm run check` passes in CI.
+- `npm run build` passes using production-equivalent environment variables.
+- Dependency and secret scans have no unaccepted high or critical findings.
+- Mobile navigation, dialogs, keyboard focus, reduced motion, and color contrast have been manually verified.
+
 ## Performance
 - Lighthouse/PageSpeed Insights was run against a live product and collection page.
 - No console errors appear in the production build.

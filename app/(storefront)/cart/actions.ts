@@ -4,8 +4,23 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { shopifyClient } from "@/lib/shopify/client";
 import { CART_CREATE, CART_LINES_ADD, CART_LINES_REMOVE, CART_LINES_UPDATE } from "@/lib/shopify/mutations";
-import { CART_QUERY } from "@/lib/shopify/queries";
-import type { CartQueryData } from "@/lib/shopify/types";
+import type { CartMutationPayload, ShopifyUserError } from "@/lib/shopify/types";
+
+const MAX_CART_QUANTITY = 99;
+const PRODUCT_VARIANT_ID_PREFIX = "gid://shopify/ProductVariant/";
+const CART_LINE_ID_PREFIX = "gid://shopify/CartLine/";
+
+function validationError(message: string) {
+  return { cart: null, userErrors: [{ message }] satisfies ShopifyUserError[] };
+}
+
+function isShopifyId(value: unknown, prefix: string): value is string {
+  return typeof value === "string" && value.startsWith(prefix) && value.length > prefix.length;
+}
+
+function isValidQuantity(quantity: unknown, allowZero = false): quantity is number {
+  return Number.isInteger(quantity) && Number(quantity) >= (allowZero ? 0 : 1) && Number(quantity) <= MAX_CART_QUANTITY;
+}
 
 async function getCartIdCookie() {
   const cookieStore = await cookies();
@@ -29,7 +44,7 @@ async function ensureCart() {
     return existingCartId;
   }
 
-  const createResult = await shopifyClient.request<{ cartCreate: { cart: { id: string } | null; userErrors: Array<{ field?: string[]; message: string }> } }>(CART_CREATE, {
+  const createResult = await shopifyClient.request<{ cartCreate: CartMutationPayload }>(CART_CREATE, {
     lines: [],
   });
 
@@ -42,54 +57,78 @@ async function ensureCart() {
 }
 
 export async function addToCart(variantId: string, quantity: number) {
+  if (!isShopifyId(variantId, PRODUCT_VARIANT_ID_PREFIX)) {
+    return validationError("Please select a valid product variant.");
+  }
+
+  if (!isValidQuantity(quantity)) {
+    return validationError(`Quantity must be a whole number between 1 and ${MAX_CART_QUANTITY}.`);
+  }
+
   const cartId = await ensureCart();
-  const result = await shopifyClient.request<{ cartLinesAdd: { cart: { id: string } | null; userErrors: Array<{ field?: string[]; message: string }> } }>(CART_LINES_ADD, {
+  const result = await shopifyClient.request<{ cartLinesAdd: CartMutationPayload }>(CART_LINES_ADD, {
     cartId,
     lines: [{ merchandiseId: variantId, quantity }],
   });
 
   if (result.cartLinesAdd.userErrors.length > 0) {
-    return { userErrors: result.cartLinesAdd.userErrors };
+    return { cart: null, userErrors: result.cartLinesAdd.userErrors };
   }
 
   revalidatePath("/cart");
-  return { cart: result.cartLinesAdd.cart };
+  return { cart: result.cartLinesAdd.cart, userErrors: [] };
 }
 
 export async function updateCartLine(lineId: string, quantity: number) {
-  const cartId = await getCartIdCookie();
-  if (!cartId) {
-    return { userErrors: [{ message: "The cart is empty." }] };
+  if (!isShopifyId(lineId, CART_LINE_ID_PREFIX)) {
+    return validationError("The selected cart line is invalid.");
   }
 
-  const result = await shopifyClient.request<{ cartLinesUpdate: { cart: { id: string } | null; userErrors: Array<{ field?: string[]; message: string }> } }>(CART_LINES_UPDATE, {
+  if (!isValidQuantity(quantity, true)) {
+    return validationError(`Quantity must be a whole number between 0 and ${MAX_CART_QUANTITY}.`);
+  }
+
+  if (quantity === 0) {
+    return removeCartLine(lineId);
+  }
+
+  const cartId = await getCartIdCookie();
+  if (!cartId) {
+    return validationError("The cart is empty.");
+  }
+
+  const result = await shopifyClient.request<{ cartLinesUpdate: CartMutationPayload }>(CART_LINES_UPDATE, {
     cartId,
     lines: [{ id: lineId, quantity }],
   });
 
   if (result.cartLinesUpdate.userErrors.length > 0) {
-    return { userErrors: result.cartLinesUpdate.userErrors };
+    return { cart: null, userErrors: result.cartLinesUpdate.userErrors };
   }
 
   revalidatePath("/cart");
-  return { cart: result.cartLinesUpdate.cart };
+  return { cart: result.cartLinesUpdate.cart, userErrors: [] };
 }
 
 export async function removeCartLine(lineId: string) {
-  const cartId = await getCartIdCookie();
-  if (!cartId) {
-    return { userErrors: [{ message: "The cart is empty." }] };
+  if (!isShopifyId(lineId, CART_LINE_ID_PREFIX)) {
+    return validationError("The selected cart line is invalid.");
   }
 
-  const result = await shopifyClient.request<{ cartLinesRemove: { cart: { id: string } | null; userErrors: Array<{ field?: string[]; message: string }> } }>(CART_LINES_REMOVE, {
+  const cartId = await getCartIdCookie();
+  if (!cartId) {
+    return validationError("The cart is empty.");
+  }
+
+  const result = await shopifyClient.request<{ cartLinesRemove: CartMutationPayload }>(CART_LINES_REMOVE, {
     cartId,
     lineIds: [lineId],
   });
 
   if (result.cartLinesRemove.userErrors.length > 0) {
-    return { userErrors: result.cartLinesRemove.userErrors };
+    return { cart: null, userErrors: result.cartLinesRemove.userErrors };
   }
 
   revalidatePath("/cart");
-  return { cart: result.cartLinesRemove.cart };
+  return { cart: result.cartLinesRemove.cart, userErrors: [] };
 }

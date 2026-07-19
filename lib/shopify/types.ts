@@ -91,7 +91,11 @@ export type CollectionQueryData = {
 
 export type ProductHandlesQueryData = {
   products: {
-    nodes: Array<{ handle: string }>;
+    pageInfo?: {
+      hasNextPage: boolean;
+      endCursor?: string | null;
+    };
+    nodes: Array<{ handle: string; updatedAt?: string }>;
   };
 };
 
@@ -115,7 +119,17 @@ export type CartLine = {
 export type CartCost = {
   subtotalAmount: Money;
   totalAmount: Money;
-  totalTaxAmount: Money;
+  totalTaxAmount?: Money | null;
+};
+
+export type ShopifyUserError = {
+  field?: string[] | null;
+  message: string;
+};
+
+export type CartMutationPayload = {
+  cart: Cart | null;
+  userErrors: ShopifyUserError[];
 };
 
 export type Cart = {

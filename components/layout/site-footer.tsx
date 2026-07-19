@@ -22,18 +22,18 @@ export function SiteFooter() {
         <div>
           <h4 className="text-[0.7rem] font-medium uppercase tracking-[0.3em] text-[var(--gold)]">Shop</h4>
           <div className="mt-4 space-y-2 text-[0.86rem] text-[var(--mist)]">
-            <Link href="/shop" className="block transition hover:text-[var(--gold-light)]">Fresh Truffles</Link>
-            <Link href="/shop" className="block transition hover:text-[var(--gold-light)]">Truffle Products</Link>
-            <Link href="/shop" className="block transition hover:text-[var(--gold-light)]">Saffron</Link>
+            <Link href="/shop?category=frische-truffel" className="block transition hover:text-[var(--gold-light)]">Fresh Truffles</Link>
+            <Link href="/shop?category=truffelprodukte" className="block transition hover:text-[var(--gold-light)]">Truffle Products</Link>
+            <Link href="/shop?category=safran" className="block transition hover:text-[var(--gold-light)]">Saffron</Link>
             <Link href="/shop" className="block transition hover:text-[var(--gold-light)]">Fine Foods</Link>
           </div>
         </div>
         <div>
           <h4 className="text-[0.7rem] font-medium uppercase tracking-[0.3em] text-[var(--gold)]">Company</h4>
           <div className="mt-4 space-y-2 text-[0.86rem] text-[var(--mist)]">
-            <Link href="/search" className="block transition hover:text-[var(--gold-light)]">About us</Link>
-            <Link href="/search" className="block transition hover:text-[var(--gold-light)]">Contact</Link>
-            <Link href="/shop" className="block transition hover:text-[var(--gold-light)]">B2B / Wholesale</Link>
+            <Link href="/about" className="block transition hover:text-[var(--gold-light)]">About us</Link>
+            <a href="mailto:info@valbridgegroup.com" className="block transition hover:text-[var(--gold-light)]">Email us</a>
+            <Link href="/wholesale" className="block transition hover:text-[var(--gold-light)]">B2B / Wholesale</Link>
           </div>
         </div>
         <div>
@@ -49,7 +49,13 @@ export function SiteFooter() {
 
       <div className="mx-auto mt-10 flex max-w-[1240px] flex-wrap items-center justify-between gap-4 border-t border-[var(--line-soft)] pt-6 text-[0.7rem] uppercase tracking-[0.18em] text-[rgba(245,239,227,0.4)]">
         <p>© 2026 Valbridge Group · www.valbridgegroup.com</p>
-        <p>Impressum · AGB · Datenschutz</p>
+        <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-2">
+          <Link href="/legal/imprint">Imprint</Link>
+          <Link href="/legal/terms">Terms</Link>
+          <Link href="/legal/privacy">Privacy</Link>
+          <Link href="/legal/shipping">Shipping</Link>
+          <Link href="/legal/refunds">Refunds</Link>
+        </nav>
       </div>
     </footer>
   );

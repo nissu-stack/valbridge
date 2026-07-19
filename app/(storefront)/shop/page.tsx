@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { ProductGridWithPagination } from "@/components/product/product-grid-with-pagination";
-import { ProductGrid } from "@/components/product/product-grid";
+import { ShopSortSelect } from "@/components/product/shop-sort-select";
 import { shopifyClient } from "@/lib/shopify/client";
 import { ALL_COLLECTIONS_QUERY, COLLECTION_QUERY, SHOP_PRODUCTS_QUERY } from "@/lib/shopify/queries";
 import { searchProducts } from "@/lib/shopify/search";
@@ -45,14 +45,6 @@ const rangeOptions: RangeOption[] = [
   { label: "Saffron", value: "safran", query: "saffron", collectionHandles: ["safran", "saffron"] },
   { label: "Truffle products", value: "truffelprodukte", query: "truffle products", collectionHandles: ["truffelprodukte", "truffle-products"] },
 ];
-
-const sortOptions = [
-  { label: "Relevance", value: "", href: (category: string) => (category ? `/shop?category=${encodeURIComponent(category)}` : "/shop") },
-  { label: "Trending", value: "trending-desc", href: (category: string) => (category ? `/shop?category=${encodeURIComponent(category)}&sort=trending-desc` : "/shop?sort=trending-desc") },
-  { label: "Latest Arrivals", value: "latest-desc", href: (category: string) => (category ? `/shop?category=${encodeURIComponent(category)}&sort=latest-desc` : "/shop?sort=latest-desc") },
-  { label: "Price: Low to High", value: "price-asc", href: (category: string) => (category ? `/shop?category=${encodeURIComponent(category)}&sort=price-asc` : "/shop?sort=price-asc") },
-  { label: "Price: High to Low", value: "price-desc", href: (category: string) => (category ? `/shop?category=${encodeURIComponent(category)}&sort=price-desc` : "/shop?sort=price-desc") },
-] as const;
 
 function getProductSortArgs(sort?: string) {
   if (sort === "price-asc") {
@@ -137,8 +129,8 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
       after: before ? undefined : after,
       before: before ?? undefined,
       last: before ? pageSize : undefined,
-      sortKey: sort === "price-desc" ? "PRICE" : sort === "title" ? "TITLE" : "BEST_SELLING",
-      reverse: sort === "price-asc" || sort === "price-desc" ? sort === "price-desc" : undefined,
+      sortKey: sort === "price-asc" || sort === "price-desc" ? "PRICE" : sort === "latest-desc" ? "CREATED" : "BEST_SELLING",
+      reverse: sort === "price-desc" || sort === "latest-desc",
     });
 
     products = collectionProductsData?.collection?.products.edges.map((edge) => edge.node) ?? [];
@@ -168,7 +160,7 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
   };
 
   return (
-    <main className="mx-auto min-h-screen max-w-7xl px-4 pt-24 pb-8 sm:px-6 lg:px-8 lg:pt-28 lg:pb-12">
+    <main id="main-content" className="mx-auto min-h-screen max-w-7xl px-4 pt-24 pb-8 sm:px-6 lg:px-8 lg:pt-28 lg:pb-12">
       <div className="grid gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
         <aside className="sticky top-8 self-start rounded-[2rem] bg-[var(--panel)] p-6 shadow-[0_26px_80px_-34px_rgba(0,0,0,0.5)]">
           <div className="space-y-8">
@@ -221,27 +213,18 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
         </aside>
 
         <section className="space-y-6">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[var(--gold-light)]">Maison Valbridge collection</p>
+            <h1 className="mt-2 font-display text-3xl uppercase tracking-[0.12em] text-[var(--gold-pale)]">{selectedTitle}</h1>
+            <p className="mt-2 text-sm text-[var(--mut)]">{products.length} product{products.length === 1 ? "" : "s"} on this page</p>
+          </div>
           <div className="rounded-[1.75rem] bg-[var(--panel)] p-5 sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[var(--gold-light)]">Sort</p>
                 <p className="mt-2 text-sm text-[var(--mut)]">View by</p>
               </div>
-              <form action="/shop" method="get" className="w-full sm:w-[240px]">
-                {activeCategory ? <input type="hidden" name="category" value={activeCategory} /> : null}
-                <select
-                  id="sort"
-                  name="sort"
-                  defaultValue={sort}
-                  className="w-full rounded-full border border-[rgba(255,255,255,0.08)] bg-[var(--panel)] px-4 py-3 text-sm text-[var(--cream)] outline-none transition focus:border-[var(--gold)] focus:ring-1 focus:ring-[rgba(201,150,43,0.12)]"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value} className="bg-[var(--panel)] text-[var(--cream)]">
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </form>
+              <ShopSortSelect value={sort} />
             </div>
           </div>
 

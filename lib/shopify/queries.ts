@@ -1,12 +1,11 @@
 import { gql } from "graphql-request";
 
-// Consumed by collection grids, search results, and future list views.
+// Minimal card payload consumed by collection grids and search results.
 export const ProductFragment = gql`
   fragment ProductFragment on Product {
     id
     handle
     title
-    descriptionHtml
     availableForSale
     featuredImage {
       url
@@ -58,44 +57,6 @@ export const ProductFragment = gql`
         title
       }
     }
-    seo {
-      title
-      description
-    }
-  }
-`;
-
-// Consumed by the single product page only.
-export const ProductVariantsFragment = gql`
-  fragment ProductVariantsFragment on Product {
-    variants(first: 100) {
-      nodes {
-        id
-        selectedOptions {
-          name
-          value
-        }
-        price {
-          amount
-          currencyCode
-        }
-        compareAtPrice {
-          amount
-          currencyCode
-        }
-        availableForSale
-        image {
-          url
-          altText
-          width
-          height
-        }
-      }
-    }
-    options {
-      name
-      values
-    }
   }
 `;
 
@@ -116,13 +77,16 @@ export const ProductImagesFragment = gql`
 // Consumed by the single product page.
 export const PRODUCT_QUERY = gql`
   ${ProductFragment}
-  ${ProductVariantsFragment}
   ${ProductImagesFragment}
   query productByHandle($handle: String!) {
     product(handle: $handle) {
       ...ProductFragment
-      ...ProductVariantsFragment
       ...ProductImagesFragment
+      descriptionHtml
+      seo {
+        title
+        description
+      }
       metafields(identifiers: [{ namespace: "custom", key: "material" }, { namespace: "custom", key: "size_chart" }]) {
         key
         namespace
@@ -134,8 +98,12 @@ export const PRODUCT_QUERY = gql`
 
 // Consumed by generateStaticParams for the product route and the sitemap.
 export const ALL_PRODUCT_HANDLES_QUERY = gql`
-  query allProductHandles($first: Int!) {
-    products(first: $first) {
+  query allProductHandles($first: Int!, $after: String) {
+    products(first: $first, after: $after) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       nodes {
         handle
         updatedAt
@@ -214,10 +182,8 @@ export const ALL_COLLECTIONS_QUERY = gql`
   }
 `;
 
-// Consumed by the cart page and cart actions.
-export const CART_QUERY = gql`
-  query cart($cartId: ID!) {
-    cart(id: $cartId) {
+export const CartFragment = gql`
+  fragment CartFragment on Cart {
       id
       checkoutUrl
       totalQuantity
@@ -261,6 +227,15 @@ export const CART_QUERY = gql`
           }
         }
       }
+  }
+`;
+
+// Consumed by the cart page and cart actions.
+export const CART_QUERY = gql`
+  ${CartFragment}
+  query cart($cartId: ID!) {
+    cart(id: $cartId) {
+      ...CartFragment
     }
   }
 `;

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useCartDrawerStore } from "@/lib/cart/store";
-import type { ProductOption, ProductVariant } from "@/lib/shopify/types";
 import { addToCart } from "@/app/(storefront)/cart/actions";
 
 type AddToCartButtonProps = {
@@ -13,6 +12,7 @@ export function AddToCartButton({ selectedVariantId }: AddToCartButtonProps) {
   const [isPending, setIsPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const openDrawer = useCartDrawerStore((state) => state.openDrawer);
+  const setCart = useCartDrawerStore((state) => state.setCart);
 
   const handleClick = async () => {
     if (!selectedVariantId) {
@@ -23,16 +23,22 @@ export function AddToCartButton({ selectedVariantId }: AddToCartButtonProps) {
     setIsPending(true);
     setMessage(null);
 
-    const result = await addToCart(selectedVariantId, 1);
-    setIsPending(false);
+    try {
+      const result = await addToCart(selectedVariantId, 1);
 
-    if ("userErrors" in result && result.userErrors?.length) {
-      setMessage(result.userErrors[0]?.message ?? "Unable to add to cart.");
-      return;
+      if (result.userErrors?.length || !result.cart) {
+        setMessage(result.userErrors[0]?.message ?? "Unable to add to cart.");
+        return;
+      }
+
+      setCart(result.cart);
+      openDrawer();
+      setMessage("Added to cart.");
+    } catch {
+      setMessage("Unable to reach the cart. Please try again.");
+    } finally {
+      setIsPending(false);
     }
-
-    openDrawer();
-    setMessage("Added to cart.");
   };
 
   return (
