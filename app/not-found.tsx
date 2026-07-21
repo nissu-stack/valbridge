@@ -7,7 +7,7 @@ export default function NotFound() {
         <p className="text-xs uppercase tracking-[0.3em] text-[var(--gold)]">404</p>
         <h1 className="mt-4 font-display text-3xl text-[var(--gold-pale)]">This page could not be found</h1>
         <p className="mt-4 text-[var(--mist)]">The product or page may have moved, expired, or no longer be available.</p>
-        <Link href="/shop" className="mt-8 inline-flex rounded-full bg-[var(--gold)] px-6 py-3 font-semibold text-[var(--obsidian)]">Browse the shop</Link>
+        <Link href="/shop" className="site-button site-button--primary mt-8">Browse the shop</Link>
       </div>
     </main>
   );

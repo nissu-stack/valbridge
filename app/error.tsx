@@ -15,8 +15,8 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         <h1 className="mt-4 font-display text-3xl text-[var(--gold-pale)]">We could not load this page</h1>
         <p className="mt-4 text-[var(--mist)]">Please try again. If the problem continues, contact our team for assistance.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <button type="button" onClick={reset} className="rounded-full bg-[var(--gold)] px-6 py-3 font-semibold text-[var(--obsidian)]">Try again</button>
-          <Link href="/shop" className="rounded-full border border-[var(--line)] px-6 py-3 text-[var(--gold-light)]">Return to shop</Link>
+          <button type="button" onClick={reset} className="site-button site-button--primary">Try again</button>
+          <Link href="/shop" className="site-button site-button--secondary">Return to shop</Link>
         </div>
       </div>
     </main>

@@ -47,7 +47,7 @@ export function AddToCartButton({ selectedVariantId }: AddToCartButtonProps) {
         type="button"
         onClick={handleClick}
         disabled={isPending || !selectedVariantId}
-        className="inline-flex w-full items-center justify-center rounded-full bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--obsidian)] transition hover:bg-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-60"
+        className="site-button site-button--primary w-full"
       >
         {isPending ? "Adding..." : selectedVariantId ? "Add to cart" : "Select a variant"}
       </button>

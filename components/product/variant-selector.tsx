@@ -47,7 +47,7 @@ export function VariantSelector({ variants, options, onSelect }: VariantSelector
                   onClick={() => handleSelect(option.name, value)}
                   disabled={!isAvailable}
                   aria-pressed={isSelected}
-                  className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                  className={`border px-4 py-2 text-sm font-medium transition ${
                     isSelected
                       ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--obsidian)]"
                       : "border-[var(--line)] bg-[rgba(255,255,255,0.04)] text-[var(--cream)] hover:border-[var(--gold)]"

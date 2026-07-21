@@ -11,7 +11,7 @@ export function InfoPage({ eyebrow, title, intro, sections, action }: { eyebrow:
           <p className="text-xs uppercase tracking-[0.42em] text-[var(--gold)]">{eyebrow}</p>
           <h1 className="mt-5 font-display text-[clamp(2.2rem,6vw,4.5rem)] uppercase leading-[1.15] tracking-[0.14em] text-[var(--gold-pale)]">{title}</h1>
           <p className="mx-auto mt-7 max-w-3xl font-serif text-[clamp(1.15rem,2.4vw,1.5rem)] leading-8 text-[var(--mist)]">{intro}</p>
-          {action ? <Link href={action.href} className="mt-10 inline-flex bg-[linear-gradient(135deg,var(--gold-deep),var(--gold)_45%,var(--gold-light))] px-9 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[var(--obsidian)] transition hover:-translate-y-px">{action.label}</Link> : null}
+          {action ? <Link href={action.href} className="site-button site-button--primary mt-10">{action.label}</Link> : null}
         </div>
       </header>
 

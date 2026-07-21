@@ -1,11 +1,11 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { formatMoney } from "@/lib/format";
-import type { Metadata } from "next";
-import { getCartFromCookies } from "@/lib/shopify/cart";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { CartLineControls } from "@/components/cart/cart-line-controls";
+import { CartRemoveButton } from "@/components/cart/cart-remove-button";
+import { formatMoney } from "@/lib/format";
+import { getCartFromCookies } from "@/lib/shopify/cart";
 
 export const metadata: Metadata = {
   title: "Cart",
@@ -19,116 +19,129 @@ export default async function CartPage() {
 
   if (!cart || cart.lines.nodes.length === 0) {
     return (
-      <main id="main-content" className="mx-auto min-h-screen max-w-5xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
-        <div className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-12 text-center shadow-[0_40px_140px_-90px_rgba(0,0,0,0.65)]">
-          <Badge className="mx-auto mb-6 inline-flex border-[var(--gold)] bg-[rgba(201,150,43,0.12)] text-[var(--gold-light)]">Your bag</Badge>
-          <h1 className="font-display text-[clamp(2.15rem,4vw,3.4rem)] uppercase tracking-[0.18em] text-[var(--gold-pale)]">Empty cart</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[var(--mist)]">
-            Save your favorites for later and return to discover the finest olive oils, truffles, and gourmet pantry essentials.
-          </p>
-          <Link href="/shop" className="mt-10 inline-flex">
-            <Button className="rounded-full bg-[var(--gold)] px-12 py-3 text-[var(--obsidian)] hover:bg-[var(--gold-light)]">Browse shop</Button>
-          </Link>
-        </div>
+      <main id="main-content" className="min-h-screen pt-[76px]">
+        <section className="flex min-h-[calc(100vh-76px)] items-center border-b border-[var(--line-soft)] bg-[var(--panel)] px-5 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow">Your selection</p>
+            <h1 className="mt-4 font-display text-[clamp(2.25rem,6vw,4rem)] uppercase tracking-[0.12em] text-[var(--gold-pale)]">Your bag is empty</h1>
+            <p className="mx-auto mt-5 max-w-xl font-serif text-xl leading-8 text-[var(--mist)]">
+              Explore fine truffles, saffron, olive oil and considered pantry essentials.
+            </p>
+            <Link href="/shop" className="site-button site-button--primary mt-8">
+              Explore the collection <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </section>
       </main>
     );
   }
 
   return (
-    <main id="main-content" className="mx-auto min-h-screen max-w-6xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
-      <section className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-10 shadow-[0_40px_140px_-90px_rgba(0,0,0,0.65)]">
-        <Badge className="inline-flex border-[var(--gold)] bg-[rgba(201,150,43,0.12)] text-[var(--gold-light)]">Your bag</Badge>
-        <div className="mt-6 max-w-3xl">
-          <h1 className="font-display text-[clamp(2.25rem,4vw,3.75rem)] uppercase tracking-[0.18em] text-[var(--gold-pale)]">Cart</h1>
-          <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--mist)]">
-            {cart.totalQuantity} item{cart.totalQuantity === 1 ? "" : "s"} waiting for checkout. Review the selection, adjust quantities, and confirm your order before secure payment.
-          </p>
+    <main id="main-content" className="min-h-screen pt-[76px]">
+      <header className="border-b border-[var(--line-soft)] bg-[var(--panel)]">
+        <div className="mx-auto max-w-[1240px] px-5 py-12 sm:px-6 sm:py-14 lg:px-8">
+          <p className="eyebrow">Your selection</p>
+          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="font-display text-[clamp(2.25rem,5vw,3.75rem)] uppercase tracking-[0.12em] text-[var(--gold-pale)]">Shopping bag</h1>
+              <p className="mt-3 text-sm text-[var(--mut)]">
+                {cart.totalQuantity} item{cart.totalQuantity === 1 ? "" : "s"} ready for review
+              </p>
+            </div>
+            <Link href="/shop" className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-[var(--gold-light)] transition hover:text-[var(--gold-pale)]">
+              Continue shopping <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
-      </section>
+      </header>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-[1.6fr_0.9fr]">
-        <div className="space-y-5">
-          {cart.lines.nodes.map((line) => (
-            <div key={line.id} className="overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--panel2)] p-6 shadow-[0_24px_70px_-36px_rgba(0,0,0,0.45)] sm:grid sm:grid-cols-[120px_1fr] sm:gap-6">
-              <div className="h-28 w-full overflow-hidden rounded-[1.8rem] bg-[var(--panel)]">
-                {line.merchandise.image ? (
-                  <Image
-                    src={line.merchandise.image.url}
-                    alt={line.merchandise.image.altText ?? line.merchandise.product.title}
-                    width={240}
-                    height={240}
-                    sizes="120px"
-                    className="h-full w-full object-cover"
-                  />
-                ) : null}
-              </div>
+      <section className="mx-auto grid max-w-[1240px] gap-12 px-5 py-12 sm:px-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(310px,0.75fr)] lg:items-start lg:px-8 lg:py-16">
+        <div>
+          <div className="flex items-center justify-between border-b border-[var(--line)] pb-4">
+            <h2 className="text-xs font-medium uppercase tracking-[0.22em] text-[var(--cream)]">Products</h2>
+            <span className="text-xs uppercase tracking-[0.14em] text-[var(--mut)]">{cart.lines.nodes.length} line{cart.lines.nodes.length === 1 ? "" : "s"}</span>
+          </div>
 
-              <div className="mt-5 flex flex-col justify-between gap-6 sm:mt-0">
-                <div>
-                  <p className="text-xl font-semibold text-[var(--cream)]">{line.merchandise.product.title}</p>
-                  <p className="mt-2 text-sm uppercase tracking-[0.2em] text-[var(--gold-light)]">{line.merchandise.title}</p>
-                </div>
+          <div>
+            {cart.lines.nodes.map((line) => (
+              <article key={line.id} className="relative grid gap-5 border-b border-[var(--line-soft)] py-6 pr-12 sm:grid-cols-[128px_minmax(0,1fr)] sm:gap-7">
+                <CartRemoveButton lineId={line.id} productTitle={line.merchandise.product.title} />
+                <Link href={`/products/${line.merchandise.product.handle}`} className="h-32 w-32 overflow-hidden border border-[var(--line-soft)] bg-[var(--panel2)]">
+                  {line.merchandise.image ? (
+                    <Image
+                      src={line.merchandise.image.url}
+                      alt={line.merchandise.image.altText ?? line.merchandise.product.title}
+                      width={256}
+                      height={256}
+                      sizes="128px"
+                      className="h-full w-full object-cover transition duration-500 hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <span className="flex h-full items-center justify-center text-xs text-[var(--mut)]">No image</span>
+                  )}
+                </Link>
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <CartLineControls lineId={line.id} quantity={line.quantity} />
+                <div className="flex min-w-0 flex-col justify-between gap-6">
+                  <div>
+                    <Link href={`/products/${line.merchandise.product.handle}`} className="font-display text-lg font-medium leading-7 tracking-[0.025em] text-[var(--cream)] transition hover:text-[var(--gold-light)]">
+                      {line.merchandise.product.title}
+                    </Link>
+                    {line.merchandise.title && line.merchandise.title !== "Default Title" ? (
+                      <p className="mt-2 text-xs uppercase tracking-[0.16em] text-[var(--mut)]">{line.merchandise.title}</p>
+                    ) : null}
+                  </div>
 
-                  <div className="flex items-center justify-between gap-3 sm:justify-end">
-                    <p className="text-lg font-semibold text-[var(--gold-light)]">{formatMoney({ amount: String(Number(line.merchandise.price.amount) * line.quantity), currencyCode: line.merchandise.price.currencyCode })}</p>
+                  <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                    <CartLineControls lineId={line.id} quantity={line.quantity} />
+                    <div className="sm:text-right">
+                      <p className="text-xs uppercase tracking-[0.14em] text-[var(--mut)]">Line total</p>
+                      <p className="mt-1 font-display text-lg font-medium text-[var(--gold-light)]">
+                        {formatMoney({ amount: String(Number(line.merchandise.price.amount) * line.quantity), currencyCode: line.merchandise.price.currencyCode })}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </article>
+            ))}
+          </div>
         </div>
 
-        <aside className="space-y-6">
-          <div className="rounded-[2.5rem] border border-[var(--line)] bg-[var(--panel)] p-8 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.55)]">
-            <div className="flex items-center justify-between text-sm uppercase tracking-[0.18em] text-[var(--gold-light)]">
-              <span>Your order</span>
-              <span>{cart.totalQuantity} item{cart.totalQuantity === 1 ? "" : "s"}</span>
-            </div>
+        <aside className="border-y border-[var(--line)] bg-[var(--coal)] px-6 py-7 lg:sticky lg:top-28">
+          <p className="text-[10px] font-medium uppercase tracking-[0.26em] text-[var(--gold)]">Order summary</p>
 
-            <div className="mt-6 space-y-4 text-sm text-[var(--mist)]">
-              <div className="flex items-center justify-between">
-                <span>Subtotal</span>
-                <span className="text-[var(--cream)]">{formatMoney(cart.cost.subtotalAmount)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Estimated tax</span>
-                <span className="text-[var(--cream)]">{formatMoney(cart.cost.totalTaxAmount ?? { amount: "0", currencyCode: cart.cost.subtotalAmount.currencyCode })}</span>
-              </div>
+          <div className="mt-6 space-y-4 border-b border-[var(--line-soft)] pb-6 text-sm">
+            <div className="flex items-center justify-between text-[var(--mist)]">
+              <span>Subtotal</span>
+              <span className="text-[var(--cream)]">{formatMoney(cart.cost.subtotalAmount)}</span>
             </div>
-
-            <div className="mt-6 flex items-center justify-between border-t border-[var(--line)] pt-4 text-xl font-semibold text-[var(--cream)]">
-              <span>Total</span>
-              <span>{formatMoney(cart.cost.totalAmount)}</span>
+            <div className="flex items-center justify-between text-[var(--mist)]">
+              <span>Estimated tax</span>
+              <span className="text-[var(--cream)]">{formatMoney(cart.cost.totalTaxAmount ?? { amount: "0", currencyCode: cart.cost.subtotalAmount.currencyCode })}</span>
             </div>
-
-            <div className="mt-8 grid gap-3">
-              <a
-                href={cart.checkoutUrl}
-                className="inline-flex w-full items-center justify-center rounded-full bg-[var(--gold)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]"
-              >
-                Checkout securely
-              </a>
-              <Link href="/shop" className="inline-flex w-full items-center justify-center rounded-full border border-[var(--line)] bg-white px-5 py-3 text-sm font-semibold text-[var(--ink)] transition hover:bg-zinc-50">
-                Continue shopping
-              </Link>
+            <div className="flex items-center justify-between text-[var(--mist)]">
+              <span>Delivery</span>
+              <span className="text-[var(--mut)]">At checkout</span>
             </div>
-
-            <p className="mt-4 text-center text-xs uppercase tracking-[0.22em] text-[var(--mut)]">
-              Secure payment through Shopify checkout
-            </p>
           </div>
 
-          <div className="rounded-[2.5rem] border border-[var(--line)] bg-[rgba(201,150,43,0.06)] p-6">
-            <p className="text-sm uppercase tracking-[0.28em] text-[var(--gold-light)]">Need help?</p>
-            <p className="mt-3 text-sm leading-7 text-[var(--cream)]">
-              Contact us for gift orders, wholesale support, or bespoke sourcing assistance.
-            </p>
+          <div className="flex items-end justify-between py-6">
+            <span className="text-xs uppercase tracking-[0.18em] text-[var(--cream)]">Total</span>
+            <span className="font-display text-2xl font-medium text-[var(--gold-pale)]">{formatMoney(cart.cost.totalAmount)}</span>
+          </div>
+
+          <a href={cart.checkoutUrl} className="site-button site-button--primary w-full">
+            Checkout securely
+          </a>
+          <Link href="/shop" className="site-button site-button--secondary mt-3 w-full">
+            Continue shopping
+          </Link>
+
+          <div className="mt-6 flex items-start gap-3 border-t border-[var(--line-soft)] pt-5">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--gold)]" strokeWidth={1.5} aria-hidden="true" />
+            <p className="text-xs leading-5 text-[var(--mut)]">Secure payment and final delivery options are provided through Shopify checkout.</p>
           </div>
         </aside>
-      </div>
+      </section>
     </main>
   );
 }

@@ -1,25 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { ArrowRight, Search, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { ProductGridWithPagination } from "@/components/product/product-grid-with-pagination";
+import { ShopCollectionSelect } from "@/components/product/shop-collection-select";
 import { ShopSortSelect } from "@/components/product/shop-sort-select";
 import { shopifyClient } from "@/lib/shopify/client";
 import { ALL_COLLECTIONS_QUERY, COLLECTION_QUERY, SHOP_PRODUCTS_QUERY } from "@/lib/shopify/queries";
 import { searchProducts } from "@/lib/shopify/search";
 import type { CollectionQueryData, Product } from "@/lib/shopify/types";
 
-const siteName = process.env.SITE_NAME ?? "Maison Valbridge";
-
-type PageInfo = {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor?: string | null;
-  endCursor?: string | null;
-};
-
 type ShopPageProductsQueryData = {
   products: {
-    pageInfo: PageInfo;
     nodes: Product[];
   };
 };
@@ -30,39 +21,17 @@ type ShopPageCollectionsQueryData = {
   };
 };
 
-type RangeOption = {
-  label: string;
-  value: string;
-  query: string;
-  collectionHandles?: readonly string[];
-};
-
-const rangeOptions: RangeOption[] = [
-  { label: "All products", value: "", query: "" },
-  { label: "Fresh truffles", value: "frische-truffel", query: "fresh truffles", collectionHandles: ["frische-truffel", "fresh-truffles"] },
-  { label: "Plant-based", value: "plant-based", query: "plant based", collectionHandles: ["plant-based"] },
-  { label: "Premium olive oil", value: "premium-olive-oil", query: "premium olive oil", collectionHandles: ["premium-olive-oil"] },
-  { label: "Saffron", value: "safran", query: "saffron", collectionHandles: ["safran", "saffron"] },
-  { label: "Truffle products", value: "truffelprodukte", query: "truffle products", collectionHandles: ["truffelprodukte", "truffle-products"] },
-];
+const shopPromises = [
+  { icon: Sparkles, title: "Curated quality", copy: "Exceptional ingredients, selected with care." },
+  { icon: Truck, title: "Careful delivery", copy: "Packed to protect flavour and freshness." },
+  { icon: ShieldCheck, title: "Secure checkout", copy: "Simple, protected and dependable." },
+] as const;
 
 function getProductSortArgs(sort?: string) {
-  if (sort === "price-asc") {
-    return { sortKey: "PRICE", reverse: false } as const;
-  }
-
-  if (sort === "price-desc") {
-    return { sortKey: "PRICE", reverse: true } as const;
-  }
-
-  if (sort === "title") {
-    return { sortKey: "TITLE", reverse: false } as const;
-  }
-
-  if (sort === "latest-desc") {
-    return { sortKey: "CREATED_AT", reverse: true } as const;
-  }
-
+  if (sort === "price-asc") return { sortKey: "PRICE", reverse: false } as const;
+  if (sort === "price-desc") return { sortKey: "PRICE", reverse: true } as const;
+  if (sort === "title") return { sortKey: "TITLE", reverse: false } as const;
+  if (sort === "latest-desc") return { sortKey: "CREATED_AT", reverse: true } as const;
   return { sortKey: "BEST_SELLING", reverse: false } as const;
 }
 
@@ -77,160 +46,159 @@ function sortProducts(products: Product[], sort?: string) {
     return sorted.sort((a, b) => Number(b.priceRange.minVariantPrice.amount) - Number(a.priceRange.minVariantPrice.amount));
   }
 
+  if (sort === "title") {
+    return sorted.sort((a, b) => a.title.localeCompare(b.title));
+  }
+
   return sorted;
 }
 
 export const metadata: Metadata = {
-  title: `Shop · ${siteName}`,
-  description: "Browse the Maison Valbridge edit with timeless objects for a refined home.",
+  title: "Shop",
+  description: "Shop Maison Valbridge truffles, saffron, olive oil and refined pantry essentials.",
 };
 
-export default async function ShopPage({ searchParams }: { searchParams?: Promise<{ category?: string; sort?: string; after?: string; before?: string }> }) {
+export default async function ShopPage({ searchParams }: { searchParams?: Promise<{ category?: string; sort?: string; page?: string }> }) {
   const params = (await searchParams) ?? {};
   const activeCategory = params.category?.trim();
   const sort = params.sort?.trim();
-  const after = params.after?.trim();
-  const before = params.before?.trim();
-
+  const requestedPage = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
   const pageSize = 24;
   const sortArgs = getProductSortArgs(sort);
 
   const [collectionsData, defaultProductsData] = await Promise.all([
-    shopifyClient.request<ShopPageCollectionsQueryData>(ALL_COLLECTIONS_QUERY, { first: 50 }),
+    shopifyClient.request<ShopPageCollectionsQueryData>(ALL_COLLECTIONS_QUERY, { first: 250 }),
     shopifyClient.request<ShopPageProductsQueryData>(SHOP_PRODUCTS_QUERY, {
-      first: before ? undefined : pageSize,
-      after: before ? undefined : after,
-      before: before ?? undefined,
-      last: before ? pageSize : undefined,
+      first: 250,
       sortKey: sortArgs.sortKey,
       reverse: sortArgs.reverse,
     }),
   ]);
 
-  const collections = collectionsData.collections.nodes;
-  const activeRange = rangeOptions.find((option) => option.value === activeCategory) ?? rangeOptions[0];
-  const collectionHandles = activeRange.collectionHandles ?? [];
-  const activeCollection = collections.find((collection) => {
-    if (!activeCategory) {
-      return false;
-    }
-
-    return collection.handle === activeCategory || collectionHandles.includes(collection.handle);
-  });
+  const collections = [...collectionsData.collections.nodes].sort((a, b) => a.title.localeCompare(b.title));
+  const customerCollections = collections.filter((collection) => !collection.handle.startsWith("hidden-") && !collection.title.toLowerCase().startsWith("hidden:"));
+  const activeCollection = activeCategory
+    ? collections.find((collection) => collection.handle === activeCategory)
+    : undefined;
 
   let products: Product[] = defaultProductsData.products.nodes;
   let selectedTitle = "All products";
-  let pageInfo: PageInfo = defaultProductsData.products.pageInfo;
 
   if (activeCollection) {
     const collectionProductsData = await shopifyClient.request<CollectionQueryData>(COLLECTION_QUERY, {
       handle: activeCollection.handle,
-      first: before ? undefined : pageSize,
-      after: before ? undefined : after,
-      before: before ?? undefined,
-      last: before ? pageSize : undefined,
+      first: 250,
       sortKey: sort === "price-asc" || sort === "price-desc" ? "PRICE" : sort === "latest-desc" ? "CREATED" : "BEST_SELLING",
       reverse: sort === "price-desc" || sort === "latest-desc",
     });
 
     products = collectionProductsData?.collection?.products.edges.map((edge) => edge.node) ?? [];
-    pageInfo = collectionProductsData?.collection?.products.pageInfo ?? pageInfo;
     selectedTitle = activeCollection.title;
   } else if (activeCategory) {
-    const query = activeRange.query || activeCategory;
-    const searchResults = await searchProducts(query);
-    products = sortProducts(searchResults, sort);
-    selectedTitle = activeRange.label;
-    pageInfo = { hasNextPage: false, hasPreviousPage: false };
+    products = sortProducts(await searchProducts(activeCategory), sort);
+    selectedTitle = activeCategory.replaceAll("-", " ");
   }
 
-  const buildPageUrl = (cursorKey: "after" | "before", cursor: string) => {
+  const totalProducts = products.length;
+  const totalPages = Math.max(1, Math.ceil(totalProducts / pageSize));
+  const currentPage = Math.min(requestedPage, totalPages);
+  const pageStart = (currentPage - 1) * pageSize;
+  products = products.slice(pageStart, pageStart + pageSize);
+
+  const buildShopUrl = (values: { category?: string; sort?: string; page?: number }, anchor = false) => {
     const query = new URLSearchParams();
-
-    if (activeCategory) {
-      query.set("category", activeCategory);
-    }
-
-    if (sort) {
-      query.set("sort", sort);
-    }
-
-    query.set(cursorKey, cursor);
-    return `/shop?${query.toString()}`;
+    if (values.category) query.set("category", values.category);
+    if (values.sort) query.set("sort", values.sort);
+    if (values.page && values.page > 1) query.set("page", String(values.page));
+    const queryString = query.toString();
+    return `${queryString ? `/shop?${queryString}` : "/shop"}${anchor ? "#collection" : ""}`;
   };
 
+  const numberedPages = Array.from({ length: totalPages }, (_, index) => ({
+    page: index + 1,
+    href: buildShopUrl({ category: activeCategory, sort, page: index + 1 }, true),
+  }));
+
   return (
-    <main id="main-content" className="mx-auto min-h-screen max-w-7xl px-4 pt-24 pb-8 sm:px-6 lg:px-8 lg:pt-28 lg:pb-12">
-      <div className="grid gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
-        <aside className="sticky top-8 self-start rounded-[2rem] bg-[var(--panel)] p-6 shadow-[0_26px_80px_-34px_rgba(0,0,0,0.5)]">
-          <div className="space-y-8">
-            <div className="rounded-[1.75rem] bg-[var(--bg)] p-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--gold-light)]">Search the collection</p>
-              <p className="mt-2 text-sm leading-6 text-[var(--mut)]">Search products by name, ingredient, or range.</p>
-              <form action="/search" method="get" className="mt-4">
-                <label htmlFor="q" className="sr-only">Search products</label>
-                <div className="flex items-center gap-3 rounded-full border border-[rgba(255,255,255,0.08)] bg-[var(--panel)] px-4 py-3 transition focus-within:border-[var(--gold)] focus-within:ring-1 focus-within:ring-[rgba(201,150,43,0.14)]">
-                  <input
-                    id="q"
-                    name="q"
-                    type="search"
-                    placeholder="Search Maison Valbridge"
-                    className="w-full min-w-0 bg-transparent text-sm text-[var(--cream)] placeholder:text-[var(--mut)] outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--gold)] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)]"
-                    aria-label="Search"
-                  >
-                    <Search className="h-4 w-4" />
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            <div className="rounded-[1.75rem] bg-[var(--bg)] p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--gold-light)]">Collections</p>
-              <div className="mt-4 space-y-2">
-                {rangeOptions.map((option) => {
-                  const isActive = option.value === activeCategory;
-                  return (
-                    <Link
-                      key={option.value || "all-products"}
-                      href={option.value ? `/shop?category=${option.value}` : "/shop"}
-                      className={`block rounded-[1.5rem] px-4 py-3 text-sm font-medium transition ${isActive ? "bg-[var(--gold)]/12 text-[var(--gold-light)] shadow-sm" : "bg-[var(--panel)] text-[var(--cream)] hover:bg-[rgba(201,150,43,0.08)]"}`}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span>{option.label}</span>
-                        <span className="text-xs text-[var(--mut)]">›</span>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
+    <main id="main-content" className="min-h-screen pt-[76px]">
+      <section className="relative overflow-hidden border-b border-[var(--line-soft)] bg-[var(--panel)]">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(201,150,43,0.16),transparent_34%),linear-gradient(115deg,rgba(255,255,255,0.025),transparent_55%)]" aria-hidden="true" />
+        <div className="relative mx-auto grid max-w-[1240px] gap-8 px-5 py-9 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:items-center lg:px-8 lg:py-11">
+          <div className="max-w-3xl">
+            <p className="eyebrow">Maison Valbridge · Fine foods</p>
+            <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3.25rem)] font-medium uppercase leading-[1.08] tracking-[0.08em] text-[var(--gold-pale)]">
+              The collection
+            </h1>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--mist)] sm:text-base">
+              Exceptional ingredients for considered kitchens.
+            </p>
           </div>
-        </aside>
 
-        <section className="space-y-6">
+          <div className="lg:border-l lg:border-[var(--line)] lg:pl-8">
+            <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--gold-light)]">Search products</p>
+            <form action="/search" method="get" className="mt-3">
+              <label htmlFor="shop-search" className="sr-only">Search products</label>
+              <div className="flex items-center border-b border-[var(--line-bright)] pb-3 transition focus-within:border-[var(--gold-light)]">
+                <Search className="mr-3 h-5 w-5 shrink-0 text-[var(--gold)]" aria-hidden="true" />
+                <input id="shop-search" name="q" type="search" placeholder="What are you looking for?" className="min-w-0 flex-1 bg-transparent text-sm text-[var(--cream)] outline-none placeholder:text-[var(--text-faint)]" />
+                <button type="submit" className="ml-3 inline-flex h-10 w-10 shrink-0 items-center justify-center bg-[var(--gold)] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold-light)]" aria-label="Submit search">
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="collection" aria-labelledby="collection-heading" className="mx-auto max-w-[1240px] px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+        <div className="grid gap-7 border-y border-[var(--line-soft)] py-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[var(--gold-light)]">Maison Valbridge collection</p>
-            <h1 className="mt-2 font-display text-3xl uppercase tracking-[0.12em] text-[var(--gold-pale)]">{selectedTitle}</h1>
-            <p className="mt-2 text-sm text-[var(--mut)]">{products.length} product{products.length === 1 ? "" : "s"} on this page</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--gold)]">Now viewing</p>
+            <h2 id="collection-heading" className="mt-1.5 font-display text-2xl uppercase tracking-[0.07em] text-[var(--gold-pale)] sm:text-3xl">{selectedTitle}</h2>
+            <p className="mt-2 text-sm text-[var(--mut)]">
+              {totalProducts ? `Showing ${pageStart + 1}–${Math.min(pageStart + products.length, totalProducts)} of ${totalProducts} products` : "No products in this collection"}
+            </p>
           </div>
-          <div className="rounded-[1.75rem] bg-[var(--panel)] p-5 sm:p-6">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[var(--gold-light)]">Sort</p>
-                <p className="mt-2 text-sm text-[var(--mut)]">View by</p>
-              </div>
-              <ShopSortSelect value={sort} />
-            </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <ShopCollectionSelect collections={customerCollections} value={activeCategory} />
+            <ShopSortSelect value={sort} />
           </div>
+        </div>
 
-          <ProductGridWithPagination products={products} pageInfo={pageInfo} previousPageUrl={pageInfo.hasPreviousPage ? buildPageUrl("before", pageInfo.startCursor ?? "") : undefined} nextPageUrl={pageInfo.hasNextPage ? buildPageUrl("after", pageInfo.endCursor ?? "") : undefined} />
-        </section>
-      </div>
+        {products.length ? (
+          <div className="pt-9 sm:pt-10">
+            <ProductGridWithPagination
+              products={products}
+              currentPage={currentPage}
+              pages={numberedPages}
+              previousPageUrl={currentPage > 1 ? buildShopUrl({ category: activeCategory, sort, page: currentPage - 1 }, true) : undefined}
+              nextPageUrl={currentPage < totalPages ? buildShopUrl({ category: activeCategory, sort, page: currentPage + 1 }, true) : undefined}
+            />
+          </div>
+        ) : (
+          <div className="border-y border-[var(--line-soft)] py-16 text-center">
+            <h3 className="font-display text-2xl text-[var(--gold-pale)]">No products found</h3>
+            <p className="mx-auto mt-3 max-w-md text-[var(--mut)]">This collection is currently being refreshed. Explore the complete range instead.</p>
+            <Link href="/shop#collection" className="mt-6 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[var(--gold-light)] hover:text-[var(--gold-pale)]">
+              View all products <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
+      </section>
+
+      <section aria-label="Shopping benefits" className="border-y border-[var(--line-soft)] bg-[var(--coal)]">
+        <div className="mx-auto grid max-w-[1240px] divide-y divide-[var(--line-soft)] px-5 sm:px-6 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-8">
+          {shopPromises.map(({ icon: Icon, title, copy }) => (
+            <div key={title} className="flex items-center gap-4 py-7 md:px-6 md:first:pl-0 md:last:pr-0">
+              <Icon className="h-5 w-5 shrink-0 text-[var(--gold)]" strokeWidth={1.5} aria-hidden="true" />
+              <div>
+                <p className="text-sm font-medium uppercase tracking-[0.12em] text-[var(--cream)]">{title}</p>
+                <p className="mt-1 text-sm leading-5 text-[var(--mut)]">{copy}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

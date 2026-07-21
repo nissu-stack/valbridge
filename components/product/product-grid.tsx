@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, X } from "lucide-react";
+import { ArrowUpRight, ShoppingBag, X } from "lucide-react";
 import type { Product } from "@/lib/shopify/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddToCartButton } from "@/components/product/add-to-cart-button";
@@ -77,24 +77,24 @@ export function ProductGrid({ products }: ProductGridProps) {
 
   return (
     <>
-      <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid gap-x-4 gap-y-9 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:gap-x-5 xl:gap-y-12">
         {products.map((product) => {
           const currency = product.priceRange.minVariantPrice.currencyCode;
           const formattedPrice = formatMoneyAmount(product.priceRange.minVariantPrice.amount, currency);
+          const hasPriceRange = product.priceRange.minVariantPrice.amount !== product.priceRange.maxVariantPrice.amount;
 
           return (
             <div
               key={product.id}
-              className="group flex h-full flex-col overflow-hidden rounded-[18px] border border-[var(--line)] bg-[var(--panel)] transition duration-300 hover:-translate-y-1 hover:border-[var(--line-bright)]"
+              className="group flex h-full flex-col border-b border-[var(--line-soft)] pb-5"
             >
               <Link href={`/products/${product.handle}`} className="flex h-full flex-col">
-                <div className="relative aspect-square overflow-hidden bg-[var(--panel2)]">
-                  <span className="absolute left-3 top-3 z-10 rounded-full bg-[var(--cream)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--obsidian)]">
-                    New
-                  </span>
-                  <span className="absolute right-3 top-3 z-10 rounded-full bg-[rgba(11,10,8,0.65)] px-2.5 py-1 text-[11px] font-semibold text-[var(--gold-bright)] backdrop-blur">
-                    {formattedPrice}
-                  </span>
+                <div className="relative aspect-[4/5] overflow-hidden bg-[var(--panel2)]">
+                  {!product.availableForSale ? (
+                    <span className="absolute left-3 top-3 z-10 bg-[rgba(10,10,10,0.86)] px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--cream)] backdrop-blur">
+                      Sold out
+                    </span>
+                  ) : null}
                   {product.featuredImage ? (
                     <>
                       <Image
@@ -102,37 +102,38 @@ export function ProductGrid({ products }: ProductGridProps) {
                         alt={product.featuredImage.altText ?? product.title}
                         width={900}
                         height={1125}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                        className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.035]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-70 transition group-hover:opacity-100" />
                     </>
                   ) : (
                     <div className="flex h-full items-center justify-center text-sm text-[var(--mut)]">No image</div>
                   )}
                 </div>
-                <div className="flex flex-1 flex-col justify-between p-5">
-                  <div>
-                    <div className="mb-3 text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">Maison Valbridge</div>
-                    <h2 className="font-display text-[17px] font-semibold leading-tight text-[var(--cream)]">{product.title}</h2>
+                <div className="flex flex-1 flex-col justify-between pt-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h2 className="font-display text-[16px] font-medium leading-snug tracking-[0.035em] text-[var(--cream)] transition group-hover:text-[var(--gold-pale)]">{product.title}</h2>
+                    </div>
+                    <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-[var(--mut)] transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[var(--gold-light)]" aria-hidden="true" />
                   </div>
-                  <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)]">
-                    View details →
-                  </div>
+                  <p className="mt-3 text-sm font-medium text-[var(--gold-light)]">{hasPriceRange ? "From " : ""}{formattedPrice}</p>
                 </div>
               </Link>
 
               <button
                 type="button"
+                disabled={!product.availableForSale}
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
                   handleOpen(product, event.currentTarget);
                 }}
-                className="mx-5 mb-5 inline-flex items-center justify-center gap-2 rounded-full bg-[var(--cream)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--obsidian)] transition duration-300 hover:bg-gradient-to-r hover:from-[var(--gold-light)] hover:via-[var(--gold)] hover:to-[var(--gold-deep)] hover:text-[var(--obsidian)] hover:shadow-[0_10px_35px_rgba(201,150,43,0.25)]"
+                className="site-button site-button--secondary mt-4 w-full disabled:border-[var(--line-soft)] disabled:text-[var(--text-faint)]"
               >
                 <ShoppingBag className="h-4 w-4" />
-                Quick add
+                {product.availableForSale ? "Quick add" : "Currently unavailable"}
               </button>
             </div>
           );
@@ -147,7 +148,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-faint)]">Quick add</p>
                 <h3 id="quick-add-title" className="font-display mt-2 text-[24px] font-semibold text-[var(--cream)]">{activeProduct.title}</h3>
               </div>
-              <button ref={modalCloseRef} type="button" onClick={handleClose} className="rounded-full border border-[var(--line)] p-2 text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--cream)]" aria-label="Close quick add">
+              <button ref={modalCloseRef} type="button" onClick={handleClose} className="border border-[var(--line)] p-2 text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--cream)]" aria-label="Close quick add">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -213,7 +214,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                                 onClick={() => handleSelectOption(option.name, value)}
                                 disabled={!isAvailable}
                                 aria-pressed={isSelected}
-                                className={`rounded-full border px-3 py-2 text-sm transition ${isSelected ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--obsidian)]" : "border-[var(--line)] text-[var(--mut)] hover:border-[var(--gold)] hover:text-[var(--cream)]"} disabled:cursor-not-allowed disabled:opacity-45`}
+                                className={`border px-3 py-2 text-sm transition ${isSelected ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--obsidian)]" : "border-[var(--line)] text-[var(--mut)] hover:border-[var(--gold)] hover:text-[var(--cream)]"} disabled:cursor-not-allowed disabled:opacity-45`}
                               >
                                 {value}{!isAvailable ? " (Sold out)" : ""}
                               </button>

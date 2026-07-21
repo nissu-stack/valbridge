@@ -50,7 +50,7 @@ export function SearchBar() {
         placeholder="Search products"
         value={value}
         onChange={(event) => setValue(event.target.value)}
-        className="w-full rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.04)] px-4 py-3 text-sm text-[var(--cream)] outline-none ring-0 placeholder:text-[var(--mut)] focus:border-[var(--gold)] focus:ring-2 focus:ring-[rgba(201,150,43,0.2)]"
+        className="w-full border border-[var(--line)] bg-[rgba(255,255,255,0.04)] px-4 py-3 text-sm text-[var(--cream)] outline-none ring-0 placeholder:text-[var(--mut)] focus:border-[var(--gold)] focus:ring-2 focus:ring-[rgba(201,150,43,0.2)]"
       />
     </form>
   );

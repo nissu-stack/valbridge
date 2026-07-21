@@ -9,8 +9,9 @@ import { Search } from "lucide-react";
 export function SiteHeader() {
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--line-soft)] bg-[rgba(10,10,10,0.86)] backdrop-blur-xl">
-        <div className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--line-soft)]">
+        <div className="pointer-events-none absolute inset-0 bg-[rgba(10,10,10,0.86)] backdrop-blur-xl" aria-hidden="true" />
+        <div className="relative mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-4 sm:px-6 lg:px-8">
           <MobileNavigation />
           <Link href="/" className="flex items-center gap-3" aria-label="Valbridge Group">
             <Image
@@ -31,7 +32,7 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link href="/search" className="hidden rounded-full border border-[var(--line)] p-3 text-[var(--cream)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)] sm:inline-flex" aria-label="Search products">
+            <Link href="/search" className="hidden border border-[var(--line)] p-3 text-[var(--cream)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)] sm:inline-flex" aria-label="Search products">
               <Search className="h-5 w-5" />
             </Link>
             <CartIconButton />

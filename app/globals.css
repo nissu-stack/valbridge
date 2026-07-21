@@ -93,40 +93,64 @@ body {
   background: linear-gradient(90deg, var(--line), transparent);
 }
 
-.gold-btn {
-  display: inline-block;
-  background: linear-gradient(135deg, var(--gold-deep), var(--gold) 45%, var(--gold-light));
-  color: var(--obsidian);
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  border: none;
-  padding: 16px 38px;
-  transition: box-shadow 0.3s, transform 0.3s;
-}
-
-.gold-btn:hover {
-  box-shadow: 0 6px 30px rgba(201, 150, 43, 0.45);
-  transform: translateY(-1px);
-}
-
+.site-button,
+.gold-btn,
 .ghost-btn {
-  display: inline-block;
-  background: transparent;
-  color: var(--gold-light);
-  border: 1px solid var(--line);
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
   font-weight: 500;
-  font-size: 0.8rem;
-  letter-spacing: 0.28em;
+  font-size: 0.7rem;
+  line-height: 1;
+  letter-spacing: 0.17em;
   text-transform: uppercase;
-  padding: 15px 36px;
-  transition: border-color 0.3s, background 0.3s;
+  border-radius: 0;
+  transition: border-color 0.25s, background-color 0.25s, color 0.25s;
 }
 
+.site-button:focus-visible,
+.gold-btn:focus-visible,
+.ghost-btn:focus-visible {
+  outline: 2px solid var(--gold-light);
+  outline-offset: 3px;
+}
+
+.site-button:disabled,
+.gold-btn:disabled,
+.ghost-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.site-button--primary,
+.gold-btn {
+  border: 1px solid var(--gold);
+  background: var(--gold);
+  color: var(--obsidian);
+}
+
+.site-button--primary:hover,
+.gold-btn:hover {
+  border-color: var(--gold-light);
+  background: var(--gold-light);
+  color: var(--obsidian);
+}
+
+.site-button--secondary,
+.ghost-btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--cream);
+}
+
+.site-button--secondary:hover,
 .ghost-btn:hover {
   border-color: var(--gold);
   background: rgba(201, 150, 43, 0.08);
+  color: var(--gold-light);
 }
 
 ::selection {
@@ -148,15 +172,6 @@ textarea {
 
 .font-serif {
   font-family: var(--font-serif), Georgia, serif;
-}
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
 }
 
 @keyframes floatGlow {

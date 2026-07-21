@@ -12,7 +12,7 @@ export function CartIconButton() {
     <button
       type="button"
       onClick={openDrawer}
-      className="relative inline-flex items-center justify-center rounded-full border border-[var(--line)] bg-[var(--panel)] p-3 text-[var(--ink)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)]"
+      className="relative inline-flex items-center justify-center border border-[var(--line)] bg-[var(--panel)] p-3 text-[var(--ink)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)]"
       aria-label="Open cart"
       aria-controls="cart-panel"
       aria-expanded={isOpen}

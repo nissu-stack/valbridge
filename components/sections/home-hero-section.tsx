@@ -45,10 +45,10 @@ export function HomeHeroSection({ siteName }: HomeHeroSectionProps) {
           <span className="px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)]">Global Trust</span>
         </div>
         <div className="mt-[48px] flex flex-wrap justify-center gap-[18px]">
-          <Link href="/shop" className="gold-btn inline-block rounded-none transition duration-300 hover:-translate-y-[1px]">
+          <Link href="/shop" className="gold-btn">
             Shop now
           </Link>
-          <Link href="/wholesale" className="ghost-btn inline-block transition duration-300 hover:-translate-y-[1px]">
+          <Link href="/wholesale" className="ghost-btn">
             Wholesale inquiry
           </Link>
         </div>

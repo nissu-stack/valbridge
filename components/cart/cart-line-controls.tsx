@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { removeCartLine, updateCartLine } from "@/app/(storefront)/cart/actions";
+import { Minus, Plus } from "lucide-react";
+import { updateCartLine } from "@/app/(storefront)/cart/actions";
 import { useCartDrawerStore } from "@/lib/cart/store";
 
 export function CartLineControls({ lineId, quantity }: { lineId: string; quantity: number }) {
@@ -29,16 +30,31 @@ export function CartLineControls({ lineId, quantity }: { lineId: string; quantit
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <div className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.03)] px-3 py-2 text-sm text-[var(--cream)]">
-        <button type="button" disabled={isPending} onClick={() => run(() => updateCartLine(lineId, quantity - 1))} aria-label="Decrease quantity" className="rounded-full border border-[var(--line)] px-3 py-2 disabled:opacity-50">−</button>
-        <span className="min-w-[2rem] text-center font-semibold" aria-live="polite">{quantity}</span>
-        <button type="button" disabled={isPending || quantity >= 99} onClick={() => run(() => updateCartLine(lineId, quantity + 1))} aria-label="Increase quantity" className="rounded-full border border-[var(--line)] px-3 py-2 disabled:opacity-50">+</button>
+    <div>
+      <div className={`inline-grid h-11 grid-cols-[42px_48px_42px] border border-[var(--line)] bg-[var(--panel)] transition ${isPending ? "opacity-55" : ""}`} aria-label="Quantity" aria-busy={isPending}>
+        <button
+          type="button"
+          disabled={isPending}
+          onClick={() => run(() => updateCartLine(lineId, quantity - 1))}
+          aria-label="Decrease quantity"
+          className="inline-flex items-center justify-center text-[var(--mut)] transition hover:bg-[rgba(201,150,43,0.09)] hover:text-[var(--gold-light)] focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait"
+        >
+          <Minus className="h-3.5 w-3.5" strokeWidth={1.75} />
+        </button>
+        <span className="inline-flex items-center justify-center border-x border-[var(--line-soft)] bg-[var(--coal)] text-sm font-medium tabular-nums text-[var(--cream)]" aria-live="polite">
+          {quantity}
+        </span>
+        <button
+          type="button"
+          disabled={isPending || quantity >= 99}
+          onClick={() => run(() => updateCartLine(lineId, quantity + 1))}
+          aria-label="Increase quantity"
+          className="inline-flex items-center justify-center text-[var(--mut)] transition hover:bg-[rgba(201,150,43,0.09)] hover:text-[var(--gold-light)] focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-40"
+        >
+          <Plus className="h-3.5 w-3.5" strokeWidth={1.75} />
+        </button>
       </div>
-      <button type="button" disabled={isPending} onClick={() => run(() => removeCartLine(lineId))} className="rounded-full bg-[var(--gold)] px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--obsidian)] disabled:opacity-50">
-        {isPending ? "Updating…" : "Remove"}
-      </button>
-      {error ? <p className="w-full text-sm text-red-300" role="alert">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm text-red-300" role="alert">{error}</p> : null}
     </div>
   );
 }

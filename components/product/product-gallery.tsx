@@ -36,7 +36,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
               key={`${image.url}-${index}`}
               type="button"
               onClick={() => setActiveImageIndex(index)}
-              className={`overflow-hidden rounded-2xl border transition ${activeImageIndex === index ? "border-[var(--gold)] bg-[rgba(201,150,43,0.12)]" : "border-[var(--line)] hover:border-[var(--gold)]"}`}
+              className={`overflow-hidden border transition ${activeImageIndex === index ? "border-[var(--gold)] bg-[rgba(201,150,43,0.12)]" : "border-[var(--line)] hover:border-[var(--gold)]"}`}
               aria-label={`Show image ${index + 1}`}
             >
               <Image src={image.url} alt={image.altText ?? title} width={120} height={120} sizes="96px" className="h-20 w-20 object-cover" />
