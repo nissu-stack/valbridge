@@ -32,9 +32,13 @@ Never commit `.env.local` or expose Storefront/webhook credentials in client-sid
 ## Architecture
 
 - `app/` contains App Router pages, metadata routes, APIs, and cart Server Actions.
-- `components/` contains layout, product, content, and reusable UI components.
+- `components/layout/` contains site-wide navigation, footer, and cart drawer composition.
+- `components/cart/` contains cart-line presentation and quantity/removal controls.
+- `components/product/` contains product cards, grids, galleries, purchasing, and Quick Add UI.
+- `components/content/` and `components/sections/` contain editorial page shells and homepage sections.
 - `lib/shopify/` contains the Storefront client, GraphQL documents, data helpers, types, cart access, and webhook validation.
-- `lib/cart/` contains the client cart/drawer store.
+- `lib/cart/` contains shared cart rules and the client cart/drawer store.
+- Tests are colocated with the pure modules they validate.
 - Shopify cart IDs are stored in a secure, HTTP-only, same-site cookie.
 - The header fetches the private cart through `/api/cart`, keeping cookie access out of the root layout render path.
 - Shopify webhook deliveries invalidate affected catalog routes through `/api/webhooks`.

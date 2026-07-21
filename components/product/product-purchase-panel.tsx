@@ -6,6 +6,7 @@ import { AddToCartButton } from "@/components/product/add-to-cart-button";
 import { VariantSelector } from "@/components/product/variant-selector";
 import type { ProductOption, ProductVariant } from "@/lib/shopify/types";
 import { getFirstAvailableVariant } from "@/lib/shopify/variants";
+import { MAX_CART_QUANTITY } from "@/lib/cart/constants";
 import { formatMoney } from "@/lib/format";
 
 type ProductPurchasePanelProps = {
@@ -44,7 +45,7 @@ export function ProductPurchasePanel({ variants, options }: ProductPurchasePanel
             <Minus className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
           <span className="inline-flex items-center justify-center border-x border-[var(--line-soft)] text-sm font-medium tabular-nums text-[var(--cream)]" aria-live="polite">{quantity}</span>
-          <button type="button" onClick={() => setQuantity((current) => Math.min(99, current + 1))} disabled={quantity === 99} className="inline-flex items-center justify-center text-[var(--mut)] transition hover:text-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-35" aria-label="Menge erhöhen">
+          <button type="button" onClick={() => setQuantity((current) => Math.min(MAX_CART_QUANTITY, current + 1))} disabled={quantity === MAX_CART_QUANTITY} className="inline-flex items-center justify-center text-[var(--mut)] transition hover:text-[var(--gold-light)] disabled:cursor-not-allowed disabled:opacity-35" aria-label="Menge erhöhen">
             <Plus className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>

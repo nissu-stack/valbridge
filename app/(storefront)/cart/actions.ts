@@ -5,8 +5,8 @@ import { revalidatePath } from "next/cache";
 import { shopifyClient } from "@/lib/shopify/client";
 import { CART_CREATE, CART_LINES_ADD, CART_LINES_REMOVE, CART_LINES_UPDATE } from "@/lib/shopify/mutations";
 import type { CartMutationPayload, ShopifyUserError } from "@/lib/shopify/types";
+import { MAX_CART_QUANTITY } from "@/lib/cart/constants";
 
-const MAX_CART_QUANTITY = 99;
 const PRODUCT_VARIANT_ID_PREFIX = "gid://shopify/ProductVariant/";
 const CART_LINE_ID_PREFIX = "gid://shopify/CartLine/";
 

@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { X, ArrowRight, ShoppingBag } from "lucide-react";
 import { removeCartLine } from "@/app/(storefront)/cart/actions";
+import { CartDrawerLine } from "@/components/cart/cart-drawer-line";
 import { useCartDrawerStore } from "@/lib/cart/store";
 import type { Cart } from "@/lib/shopify/types";
 import { formatMoney } from "@/lib/format";
@@ -141,45 +141,13 @@ export function CartDrawer() {
             <div className="flex-1 overflow-y-auto">
               <div>
                 {currentCart?.lines.nodes.map((line) => (
-                  <article key={line.id} className="relative flex gap-4 border-b border-[var(--line-soft)] px-5 py-5 sm:px-6">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveLine(line.id)}
-                      disabled={removingLineId === line.id}
-                      className="absolute right-5 top-5 inline-flex h-8 w-8 items-center justify-center border border-[var(--line-soft)] text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)] disabled:cursor-wait disabled:opacity-50 sm:right-6"
-                      aria-label={`${line.merchandise.product.title} aus dem Warenkorb entfernen`}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <Link href={`/products/${line.merchandise.product.handle}`} onClick={closeDrawer} className="h-24 w-24 shrink-0 overflow-hidden border border-[var(--line-soft)] bg-[var(--panel2)]">
-                      {line.merchandise.image ? (
-                        <Image
-                          src={line.merchandise.image.url}
-                          alt={line.merchandise.image.altText ?? line.merchandise.product.title}
-                          width={192}
-                          height={192}
-                          sizes="96px"
-                          className="h-full w-full object-cover transition duration-500 hover:scale-[1.03]"
-                        />
-                      ) : (
-                        <span className="flex h-full items-center justify-center text-xs text-[var(--mut)]">Kein Bild</span>
-                      )}
-                    </Link>
-                    <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5 pr-10">
-                      <div>
-                        <Link href={`/products/${line.merchandise.product.handle}`} onClick={closeDrawer} className="line-clamp-2 font-display text-sm font-medium leading-5 tracking-[0.02em] text-[var(--cream)] transition hover:text-[var(--gold-light)]">
-                          {line.merchandise.product.title}
-                        </Link>
-                        {line.merchandise.title && line.merchandise.title !== "Default Title" ? (
-                          <p className="mt-2 text-xs uppercase tracking-[0.12em] text-[var(--mut)]">{line.merchandise.title}</p>
-                        ) : null}
-                      </div>
-                      <div className="mt-4 flex items-end justify-between gap-3">
-                        <span className="text-sm font-medium text-[var(--gold-light)]">{formatMoney({ amount: String(Number(line.merchandise.price.amount) * line.quantity), currencyCode: line.merchandise.price.currencyCode })}</span>
-                        <span className="text-xs uppercase tracking-[0.12em] text-[var(--mut)]">Menge {line.quantity}</span>
-                      </div>
-                    </div>
-                  </article>
+                  <CartDrawerLine
+                    key={line.id}
+                    line={line}
+                    isRemoving={removingLineId === line.id}
+                    onRemove={handleRemoveLine}
+                    onNavigate={closeDrawer}
+                  />
                 ))}
               </div>
             </div>

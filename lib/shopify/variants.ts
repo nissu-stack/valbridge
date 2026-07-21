@@ -1,10 +1,23 @@
 import type { ProductOption, ProductVariant } from "@/lib/shopify/types";
 
+const DEFAULT_OPTION_NAME = "Title";
+const DEFAULT_OPTION_VALUE = "Default Title";
+
+export function isDefaultVariantTitle(title?: string | null) {
+  return !title || title === DEFAULT_OPTION_VALUE;
+}
+
+export function getVisibleProductOptions(options: ProductOption[]) {
+  return options.filter(
+    (option) => !(option.name === DEFAULT_OPTION_NAME && option.values.length === 1 && option.values[0] === DEFAULT_OPTION_VALUE),
+  );
+}
+
 export function getFirstAvailableVariant(variants: ProductVariant[]) {
   return variants.find((variant) => variant.availableForSale) ?? null;
 }
 
-export function getSelectionsForVariant(variant: ProductVariant | null) {
+function getSelectionsForVariant(variant: ProductVariant | null) {
   return Object.fromEntries(variant?.selectedOptions.map((option) => [option.name, option.value]) ?? []);
 }
 

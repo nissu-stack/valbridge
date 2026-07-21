@@ -158,18 +158,6 @@ export const SHOP_PRODUCTS_QUERY = gql`
   }
 `;
 
-// Consumed by the sitemap generator.
-export const ALL_COLLECTION_HANDLES_QUERY = gql`
-  query allCollectionHandles {
-    collections(first: 250) {
-      nodes {
-        handle
-        updatedAt
-      }
-    }
-  }
-`;
-
 // Consumed by the shop page to build category filters.
 export const ALL_COLLECTIONS_QUERY = gql`
   query allCollections($first: Int!) {

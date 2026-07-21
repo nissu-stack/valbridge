@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findAvailableVariant, getInitialVariantSelection, isOptionValueAvailable } from "@/lib/shopify/variants";
+import { findAvailableVariant, getInitialVariantSelection, getVisibleProductOptions, isDefaultVariantTitle, isOptionValueAvailable } from "@/lib/shopify/variants";
 import type { ProductVariant } from "@/lib/shopify/types";
 
 const variants: ProductVariant[] = [
@@ -19,5 +19,15 @@ describe("variant selection", () => {
   it("reports availability using the complete selection", () => {
     expect(isOptionValueAvailable(variants, { Pack: "Single" }, "Size", "Large")).toBe(true);
     expect(isOptionValueAvailable(variants, { Pack: "Single" }, "Size", "Small")).toBe(false);
+  });
+
+  it("hides Shopify's synthetic default option", () => {
+    expect(getVisibleProductOptions([{ name: "Title", values: ["Default Title"] }])).toEqual([]);
+    expect(getVisibleProductOptions([{ name: "Size", values: ["Small"] }])).toHaveLength(1);
+  });
+
+  it("identifies Shopify's synthetic default variant title", () => {
+    expect(isDefaultVariantTitle("Default Title")).toBe(true);
+    expect(isDefaultVariantTitle("Large")).toBe(false);
   });
 });

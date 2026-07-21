@@ -6,6 +6,7 @@ import { CartLineControls } from "@/components/cart/cart-line-controls";
 import { CartRemoveButton } from "@/components/cart/cart-remove-button";
 import { formatMoney } from "@/lib/format";
 import { getCartFromCookies } from "@/lib/shopify/cart";
+import { isDefaultVariantTitle } from "@/lib/shopify/variants";
 
 export const metadata: Metadata = {
   title: "Warenkorb",
@@ -86,7 +87,7 @@ export default async function CartPage() {
                     <Link href={`/products/${line.merchandise.product.handle}`} className="font-display text-lg font-medium leading-7 tracking-[0.025em] text-[var(--cream)] transition hover:text-[var(--gold-light)]">
                       {line.merchandise.product.title}
                     </Link>
-                    {line.merchandise.title && line.merchandise.title !== "Default Title" ? (
+                    {!isDefaultVariantTitle(line.merchandise.title) ? (
                       <p className="mt-2 text-xs uppercase tracking-[0.16em] text-[var(--mut)]">{line.merchandise.title}</p>
                     ) : null}
                   </div>
