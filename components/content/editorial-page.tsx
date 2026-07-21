@@ -56,7 +56,7 @@ export function EditorialPage({ eyebrow, title, intro, heroNote, facts, statemen
         </div>
       </header>
 
-      <section aria-label="At a glance" className="bg-[var(--coal)] px-5 py-8 sm:px-6 lg:px-8">
+      <section aria-label="Auf einen Blick" className="bg-[var(--coal)] px-5 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-[1240px] gap-8 sm:grid-cols-3 sm:gap-10">
           {facts.map((fact) => (
             <div key={fact.label}>
@@ -109,7 +109,7 @@ export function EditorialPage({ eyebrow, title, intro, heroNote, facts, statemen
             {process.items.map((item, index) => (
               <li key={item.title} className="relative pr-4">
                 <div className="flex items-center gap-4 text-[var(--gold)]">
-                  <span className="text-[0.68rem] font-medium uppercase tracking-[0.26em]">Step {String(index + 1).padStart(2, "0")}</span>
+                  <span className="text-[0.68rem] font-medium uppercase tracking-[0.26em]">Schritt {String(index + 1).padStart(2, "0")}</span>
                   {index < process.items.length - 1 ? <ArrowRight className="hidden h-4 w-4 lg:block" strokeWidth={1.25} aria-hidden="true" /> : null}
                 </div>
                 <h3 className="mt-5 font-display text-base uppercase tracking-[0.1em] text-[var(--cream)]">{item.title}</h3>

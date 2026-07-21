@@ -18,14 +18,14 @@ export function CartRemoveButton({ lineId, productTitle }: { lineId: string; pro
       try {
         const result = await removeCartLine(lineId);
         if (result.userErrors.length || !result.cart) {
-          setError(result.userErrors[0]?.message ?? "Unable to remove this item.");
+          setError(result.userErrors[0]?.message ?? "Dieser Artikel konnte nicht entfernt werden.");
           return;
         }
 
         setCart(result.cart);
         router.refresh();
       } catch {
-        setError("Unable to remove this item. Please try again.");
+        setError("Dieser Artikel konnte nicht entfernt werden. Bitte versuchen Sie es erneut.");
       }
     });
   };
@@ -37,7 +37,7 @@ export function CartRemoveButton({ lineId, productTitle }: { lineId: string; pro
         onClick={removeItem}
         disabled={isPending}
         className="inline-flex h-9 w-9 items-center justify-center border border-[var(--line-soft)] text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-50"
-        aria-label={`Remove ${productTitle} from cart`}
+        aria-label={`${productTitle} aus dem Warenkorb entfernen`}
         aria-busy={isPending}
       >
         <X className="h-4 w-4" aria-hidden="true" />

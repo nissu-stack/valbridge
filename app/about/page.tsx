@@ -2,55 +2,55 @@ import type { Metadata } from "next";
 import { EditorialPage } from "@/components/content/editorial-page";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn about Valbridge Group's Swiss-led sourcing and international fine-food network.",
+  title: "Über uns",
+  description: "Erfahren Sie mehr über die Schweizer Beschaffungskompetenz und das internationale Feinkostnetzwerk der Valbridge Group.",
   alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
     <EditorialPage
-      eyebrow="Valbridge Group · Canton of Bern"
-      title="A bridge from origin to table"
-      intro="We connect distinguished producers with chefs, retailers and private clients who value provenance, consistency and exceptional flavour."
-      heroNote="Swiss-led sourcing · International service"
+      eyebrow="Valbridge Group · Kanton Bern"
+      title="Eine Brücke vom Ursprung bis auf den Tisch"
+      intro="Wir verbinden ausgewählte Produzenten mit Köchen, Händlern und Privatkunden, die Herkunft, Beständigkeit und aussergewöhnlichen Geschmack schätzen."
+      heroNote="Schweizer Beschaffung · Internationaler Service"
       facts={[
-        { label: "Our base", value: "Canton of Bern, Switzerland" },
-        { label: "Our focus", value: "Truffles, saffron and fine foods" },
-        { label: "Our clients", value: "Hospitality, retail and private" },
+        { label: "Unser Standort", value: "Kanton Bern, Schweiz" },
+        { label: "Unser Fokus", value: "Trüffel, Safran und Feinkost" },
+        { label: "Unsere Kunden", value: "Gastronomie, Handel und Privatkunden" },
       ]}
       statement={{
-        eyebrow: "Our perspective",
-        title: "Fine food is built on relationships, not shortcuts.",
-        body: "We look beyond the product itself—to the people, places and decisions that shape it. That means thoughtful sourcing, honest communication and careful handling from the first conversation through final delivery.",
+        eyebrow: "Unsere Haltung",
+        title: "Erstklassige Lebensmittel entstehen durch Beziehungen, nicht durch Abkürzungen.",
+        body: "Wir betrachten mehr als nur das Produkt: die Menschen, Orte und Entscheidungen, die es prägen. Das bedeutet durchdachte Beschaffung, ehrliche Kommunikation und sorgfältige Handhabung vom ersten Gespräch bis zur Lieferung.",
       }}
       capabilities={{
-        eyebrow: "How we work",
-        title: "Considered at every step",
-        intro: "A focused way of working that protects quality while making exceptional ingredients easier to source.",
+        eyebrow: "Unsere Arbeitsweise",
+        title: "Sorgfalt bei jedem Schritt",
+        intro: "Eine fokussierte Arbeitsweise, die Qualität schützt und aussergewöhnliche Zutaten einfacher zugänglich macht.",
         items: [
-          { title: "Origin relationships", body: "We work with specialist producers and regional partners across Europe and selected origin markets, prioritising provenance and dependable quality." },
-          { title: "Disciplined selection", body: "Products are considered for flavour, condition and suitability before they become part of the Valbridge range." },
-          { title: "Careful logistics", body: "Premium and perishable goods are handled with the timing, packaging and delivery attention their character requires." },
-          { title: "Personal service", body: "We tailor guidance to the client, market, season and occasion—whether for a professional kitchen, retail shelf or private table." },
+          { title: "Beziehungen am Ursprung", body: "Wir arbeiten mit spezialisierten Produzenten und regionalen Partnern in Europa und ausgewählten Herkunftsmärkten zusammen. Herkunft und verlässliche Qualität stehen dabei im Mittelpunkt." },
+          { title: "Konsequente Auswahl", body: "Geschmack, Zustand und Eignung werden sorgfältig beurteilt, bevor ein Produkt Teil des Valbridge-Sortiments wird." },
+          { title: "Sorgfältige Logistik", body: "Hochwertige und verderbliche Waren erhalten die zeitliche, verpackungstechnische und logistische Aufmerksamkeit, die ihr Charakter verlangt." },
+          { title: "Persönlicher Service", body: "Unsere Beratung richtet sich nach Kunde, Markt, Saison und Anlass – für Profiküche, Verkaufsregal oder privaten Tisch." },
         ],
       }}
       process={{
-        eyebrow: "From source to service",
-        title: "A clear path to exceptional ingredients",
+        eyebrow: "Von der Quelle bis zum Service",
+        title: "Ein klarer Weg zu aussergewöhnlichen Zutaten",
         items: [
-          { title: "Discover", body: "Identify producers, regions and products with a distinctive story and credible provenance." },
-          { title: "Select", body: "Assess quality, seasonality and fit with the standards expected by our clients." },
-          { title: "Coordinate", body: "Plan quantities, handling and delivery around the needs of each order." },
-          { title: "Support", body: "Stay available with practical guidance before, during and after delivery." },
+          { title: "Entdecken", body: "Produzenten, Regionen und Produkte mit eigenständiger Geschichte und glaubwürdiger Herkunft identifizieren." },
+          { title: "Auswählen", body: "Qualität, Saisonalität und Übereinstimmung mit den Erwartungen unserer Kunden beurteilen." },
+          { title: "Koordinieren", body: "Mengen, Handhabung und Lieferung auf die Anforderungen jeder Bestellung abstimmen." },
+          { title: "Begleiten", body: "Vor, während und nach der Lieferung mit praktischer Beratung erreichbar bleiben." },
         ],
       }}
       closing={{
-        eyebrow: "Work with Valbridge",
-        title: "Bring considered ingredients to your table",
-        body: "Explore the collection or speak with us about sourcing for hospitality, retail and distribution.",
-        primaryAction: { href: "/shop", label: "Explore the collection" },
-        secondaryAction: { href: "/wholesale", label: "Wholesale inquiries" },
+        eyebrow: "Mit Valbridge arbeiten",
+        title: "Ausgewählte Zutaten für Ihren Tisch",
+        body: "Entdecken Sie die Kollektion oder sprechen Sie mit uns über die Beschaffung für Gastronomie, Handel und Vertrieb.",
+        primaryAction: { href: "/shop", label: "Kollektion entdecken" },
+        secondaryAction: { href: "/wholesale", label: "Grosshandelsanfrage" },
       }}
     />
   );

@@ -1,2 +1,8 @@
 import { InfoPage } from "@/components/content/info-page";
-export default function ImprintPage() { return <InfoPage eyebrow="Legal" title="Imprint" intro="Company-identification and responsible-publisher information for the Valbridge storefront." sections={[{ title: "Information required", body: "Before launch, insert the registered legal entity, full address, registration number, VAT number, authorized representative, and official contact details." }, { title: "Hosting and operation", body: "Document the storefront operator, hosting provider, and responsible contact in accordance with the jurisdictions served." }]} />; }
+
+export default function ImprintPage() {
+  return <InfoPage eyebrow="Rechtliches" title="Impressum" intro="Unternehmens- und Anbieterinformationen für den Valbridge-Onlineshop." sections={[
+    { title: "Erforderliche Angaben", body: "Vor der Veröffentlichung sind die eingetragene Rechtseinheit, vollständige Anschrift, Registernummer, Mehrwertsteuernummer, vertretungsberechtigte Person und offizielle Kontaktdaten einzufügen." },
+    { title: "Hosting und Betrieb", body: "Onlineshop-Betreiber, Hosting-Anbieter und verantwortliche Kontaktstelle sind gemäss den bedienten Rechtsgebieten zu dokumentieren." },
+  ]} />;
+}

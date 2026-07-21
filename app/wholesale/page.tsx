@@ -4,57 +4,57 @@ import { EditorialPage } from "@/components/content/editorial-page";
 const wholesaleEmail = process.env.WHOLESALE_EMAIL ?? process.env.CONTACT_EMAIL ?? "info@valbridgegroup.com";
 
 export const metadata: Metadata = {
-  title: "Wholesale",
-  description: "Request Valbridge wholesale availability and pricing for hospitality, retail, and distribution.",
+  title: "Grosshandel",
+  description: "Fragen Sie Verfügbarkeit und Preise für Gastronomie, Handel und Vertrieb bei Valbridge an.",
   alternates: { canonical: "/wholesale" },
 };
 
 export default function WholesalePage() {
-  const inquiryHref = `mailto:${wholesaleEmail}?subject=Wholesale%20price%20list%20request`;
+  const inquiryHref = `mailto:${wholesaleEmail}?subject=Grosshandelsanfrage%20Preisliste`;
 
   return (
     <EditorialPage
-      eyebrow="B2B · Hospitality · Retail"
-      title="A dependable fine-food partner"
-      intro="Seasonal availability, considered product selections and responsive service for professional kitchens, hotels, retailers and distributors."
-      heroNote="Tailored proposals · International enquiries"
+      eyebrow="B2B · Gastronomie · Handel"
+      title="Ein verlässlicher Partner für Feinkost"
+      intro="Saisonale Verfügbarkeit, ausgewählte Produkte und persönlicher Service für Profiküchen, Hotels, Händler und Vertriebspartner."
+      heroNote="Individuelle Angebote · Internationale Anfragen"
       facts={[
-        { label: "For kitchens", value: "Restaurants and hotels" },
-        { label: "For commerce", value: "Retail and distribution" },
-        { label: "Built around", value: "Market, quantity and season" },
+        { label: "Für Küchen", value: "Restaurants und Hotels" },
+        { label: "Für den Handel", value: "Detailhandel und Vertrieb" },
+        { label: "Abgestimmt auf", value: "Markt, Menge und Saison" },
       ]}
       statement={{
-        eyebrow: "Professional supply",
-        title: "Commercial service with uncompromising attention to product.",
-        body: "Wholesale requirements are rarely one-size-fits-all. We shape each proposal around product interest, expected quantity, delivery market and timing—then communicate availability and conditions clearly.",
+        eyebrow: "Professionelle Belieferung",
+        title: "Kommerzieller Service mit kompromissloser Aufmerksamkeit für das Produkt.",
+        body: "Anforderungen im Grosshandel sind selten standardisiert. Wir richten jedes Angebot nach Produktinteresse, erwarteter Menge, Liefermarkt und Zeitpunkt aus und kommunizieren Verfügbarkeit sowie Konditionen transparent.",
       }}
       capabilities={{
-        eyebrow: "Wholesale range",
-        title: "Products and support for your business",
-        intro: "From seasonal centrepieces to dependable pantry lines, our team helps build a selection appropriate for your operation and customers.",
+        eyebrow: "Grosshandelssortiment",
+        title: "Produkte und Unterstützung für Ihr Unternehmen",
+        intro: "Von saisonalen Höhepunkten bis zu verlässlichen Vorratsprodukten unterstützt unser Team Sie bei einer Auswahl, die zu Ihrem Betrieb und Ihren Kunden passt.",
         items: [
-          { title: "Fresh seasonal products", body: "Fresh-truffle availability and pricing reflect season, grade, origin and current market conditions. Quotes are therefore time-limited." },
-          { title: "Pantry selection", body: "Ask about saffron, premium oils, preserved truffle products, gift formats and tailored assortments." },
-          { title: "Commercial guidance", body: "We clarify suitable formats, expected quantities and product options for your menu, shelf or distribution model." },
-          { title: "Delivery planning", body: "Minimum quantities, temperature requirements, lead times and available delivery services are confirmed for your destination." },
+          { title: "Frische Saisonprodukte", body: "Verfügbarkeit und Preise frischer Trüffel richten sich nach Saison, Qualität, Herkunft und aktueller Marktlage. Angebote sind daher zeitlich begrenzt." },
+          { title: "Auswahl für den Vorrat", body: "Fragen Sie nach Safran, Premiumölen, konservierten Trüffelprodukten, Geschenkformaten und individuellen Sortimenten." },
+          { title: "Kommerzielle Beratung", body: "Wir klären geeignete Formate, erwartete Mengen und Produktoptionen für Speisekarte, Regal oder Vertriebsmodell." },
+          { title: "Lieferplanung", body: "Mindestmengen, Temperaturanforderungen, Vorlaufzeiten und verfügbare Lieferdienste werden für Ihr Ziel bestätigt." },
         ],
       }}
       process={{
-        eyebrow: "How to begin",
-        title: "From enquiry to confirmed supply",
+        eyebrow: "So starten Sie",
+        title: "Von der Anfrage bis zur bestätigten Lieferung",
         items: [
-          { title: "Share your brief", body: "Tell us your company, market, delivery country, product interests and expected quantities." },
-          { title: "Review availability", body: "We assess the current range, seasonality and the most suitable options for your needs." },
-          { title: "Receive a proposal", body: "Pricing, minimum quantities, lead times and delivery conditions are presented clearly." },
-          { title: "Confirm delivery", body: "Once agreed, we coordinate handling and dispatch around the product and destination." },
+          { title: "Bedarf mitteilen", body: "Nennen Sie uns Unternehmen, Markt, Lieferland, Produktinteressen und erwartete Mengen." },
+          { title: "Verfügbarkeit prüfen", body: "Wir beurteilen das aktuelle Sortiment, die Saisonalität und geeignete Optionen für Ihren Bedarf." },
+          { title: "Angebot erhalten", body: "Preise, Mindestmengen, Vorlaufzeiten und Lieferbedingungen werden übersichtlich dargestellt." },
+          { title: "Lieferung bestätigen", body: "Nach Ihrer Bestätigung koordinieren wir Handhabung und Versand passend zu Produkt und Zielort." },
         ],
       }}
       closing={{
-        eyebrow: "Start a conversation",
-        title: "Tell us what your business needs",
-        body: "Include your company, destination, preferred products, estimated quantities and required delivery window for a more useful first response.",
-        primaryAction: { href: inquiryHref, label: "Request the price list" },
-        secondaryAction: { href: "/shop", label: "View the collection" },
+        eyebrow: "Gespräch beginnen",
+        title: "Teilen Sie uns Ihren Bedarf mit",
+        body: "Nennen Sie Unternehmen, Zielort, gewünschte Produkte, geschätzte Mengen und Lieferzeitraum für eine möglichst konkrete erste Antwort.",
+        primaryAction: { href: inquiryHref, label: "Preisliste anfordern" },
+        secondaryAction: { href: "/shop", label: "Kollektion ansehen" },
       }}
     />
   );

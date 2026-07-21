@@ -31,11 +31,14 @@ export function VariantSelector({ variants, options, onSelect }: VariantSelector
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {options.map((option) => (
-        <div key={option.name} className="space-y-3">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--gold-light)]">{option.name}</p>
-          <div className="flex flex-wrap gap-3">
+        <div key={option.name}>
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <p className="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-[var(--cream)]">{option.name} auswählen</p>
+            <span className="text-xs text-[var(--mut)]">{selectedOptions[option.name]}</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
             {option.values.map((value) => {
               const isSelected = selectedOptions[option.name] === value;
               const isAvailable = isOptionValueAvailable(variants, selectedOptions, option.name, value);
@@ -47,13 +50,13 @@ export function VariantSelector({ variants, options, onSelect }: VariantSelector
                   onClick={() => handleSelect(option.name, value)}
                   disabled={!isAvailable}
                   aria-pressed={isSelected}
-                  className={`border px-4 py-2 text-sm font-medium transition ${
+                  className={`min-h-11 border px-4 py-2 text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold)] ${
                     isSelected
                       ? "border-[var(--gold)] bg-[var(--gold)] text-[var(--obsidian)]"
-                      : "border-[var(--line)] bg-[rgba(255,255,255,0.04)] text-[var(--cream)] hover:border-[var(--gold)]"
-                  } ${!isAvailable ? "cursor-not-allowed opacity-50" : ""}`}
+                      : "border-[var(--line)] bg-transparent text-[var(--cream-dim)] hover:border-[var(--gold)] hover:text-[var(--gold-light)]"
+                  } ${!isAvailable ? "cursor-not-allowed text-[var(--mut)] line-through opacity-45" : ""}`}
                 >
-                  {value} {!isAvailable ? " (Sold out)" : ""}
+                  {value} {!isAvailable ? " (Ausverkauft)" : ""}
                 </button>
               );
             })}

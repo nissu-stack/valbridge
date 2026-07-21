@@ -4,10 +4,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowUpDown, ChevronDown } from "lucide-react";
 
 const SORT_OPTIONS = [
-  { label: "Trending", value: "" },
-  { label: "Latest arrivals", value: "latest-desc" },
-  { label: "Price: low to high", value: "price-asc" },
-  { label: "Price: high to low", value: "price-desc" },
+  { label: "Beliebt", value: "" },
+  { label: "Neueste zuerst", value: "latest-desc" },
+  { label: "Preis: aufsteigend", value: "price-asc" },
+  { label: "Preis: absteigend", value: "price-desc" },
 ] as const;
 
 export function ShopSortSelect({ value = "" }: { value?: string }) {
@@ -16,7 +16,7 @@ export function ShopSortSelect({ value = "" }: { value?: string }) {
 
   return (
     <div className="w-full sm:w-[260px]">
-      <label htmlFor="sort" className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--mut)]">Sort products</label>
+      <label htmlFor="sort" className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--mut)]">Produkte sortieren</label>
       <div className="relative">
         <ArrowUpDown className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--gold)]" aria-hidden="true" />
         <select

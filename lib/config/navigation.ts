@@ -1,6 +1,6 @@
 export const NAV_LINKS = [
-  { href: "/", label: "Home" },
+  { href: "/", label: "Startseite" },
   { href: "/shop", label: "Shop" },
-  { href: "/about", label: "About" },
-  { href: "/wholesale", label: "Wholesale" },
+  { href: "/about", label: "Über uns" },
+  { href: "/wholesale", label: "Grosshandel" },
 ];

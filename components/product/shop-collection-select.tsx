@@ -20,7 +20,7 @@ export function ShopCollectionSelect({ collections, value = "" }: ShopCollection
   return (
     <div className="w-full sm:w-[300px]">
       <label htmlFor="collection-filter" className="mb-2 block text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--mut)]">
-        Collection · {collections.length}
+        Kollektion · {collections.length}
       </label>
       <div className="relative">
         <LayoutGrid className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--gold)]" aria-hidden="true" />
@@ -44,7 +44,7 @@ export function ShopCollectionSelect({ collections, value = "" }: ShopCollection
           }}
           className="h-12 w-full appearance-none border border-[var(--line-soft)] bg-[var(--panel)] py-3 pl-11 pr-10 text-sm text-[var(--cream)] outline-none transition hover:border-[var(--line-bright)] focus:border-[var(--gold)] focus:ring-1 focus:ring-[rgba(201,150,43,0.18)]"
         >
-          <option value="" className="bg-[var(--panel)] text-[var(--cream)]">All products</option>
+          <option value="" className="bg-[var(--panel)] text-[var(--cream)]">Alle Produkte</option>
           {collections.map((collection) => (
             <option key={collection.handle} value={collection.handle} className="bg-[var(--panel)] text-[var(--cream)]">
               {collection.title}

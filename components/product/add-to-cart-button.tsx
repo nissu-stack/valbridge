@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { ShoppingBag } from "lucide-react";
 import { useCartDrawerStore } from "@/lib/cart/store";
 import { addToCart } from "@/app/(storefront)/cart/actions";
 
 type AddToCartButtonProps = {
   selectedVariantId: string | null;
+  quantity?: number;
+  unavailable?: boolean;
+  onSuccess?: () => void;
 };
 
-export function AddToCartButton({ selectedVariantId }: AddToCartButtonProps) {
+export function AddToCartButton({ selectedVariantId, quantity = 1, unavailable = false, onSuccess }: AddToCartButtonProps) {
   const [isPending, setIsPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const openDrawer = useCartDrawerStore((state) => state.openDrawer);
@@ -16,7 +20,7 @@ export function AddToCartButton({ selectedVariantId }: AddToCartButtonProps) {
 
   const handleClick = async () => {
     if (!selectedVariantId) {
-      setMessage("Please select a variant first.");
+      setMessage("Bitte wählen Sie zuerst eine Variante.");
       return;
     }
 
@@ -24,34 +28,36 @@ export function AddToCartButton({ selectedVariantId }: AddToCartButtonProps) {
     setMessage(null);
 
     try {
-      const result = await addToCart(selectedVariantId, 1);
+      const result = await addToCart(selectedVariantId, quantity);
 
       if (result.userErrors?.length || !result.cart) {
-        setMessage(result.userErrors[0]?.message ?? "Unable to add to cart.");
+        setMessage(result.userErrors[0]?.message ?? "Das Produkt konnte nicht in den Warenkorb gelegt werden.");
         return;
       }
 
       setCart(result.cart);
+      onSuccess?.();
       openDrawer();
-      setMessage("Added to cart.");
+      setMessage("Zum Warenkorb hinzugefügt.");
     } catch {
-      setMessage("Unable to reach the cart. Please try again.");
+      setMessage("Der Warenkorb ist nicht erreichbar. Bitte versuchen Sie es erneut.");
     } finally {
       setIsPending(false);
     }
   };
 
   return (
-    <div className="mt-4 space-y-2">
+    <div className="space-y-3">
       <button
         type="button"
         onClick={handleClick}
-        disabled={isPending || !selectedVariantId}
+        disabled={isPending || !selectedVariantId || unavailable}
         className="site-button site-button--primary w-full"
       >
-        {isPending ? "Adding..." : selectedVariantId ? "Add to cart" : "Select a variant"}
+        <ShoppingBag className="h-4 w-4" aria-hidden="true" />
+        {isPending ? "Wird hinzugefügt..." : unavailable ? "Derzeit nicht verfügbar" : selectedVariantId ? "In den Warenkorb" : "Variante auswählen"}
       </button>
-      {message ? <p className="text-sm text-[var(--gold-light)]">{message}</p> : null}
+      {message ? <p className="text-sm text-[var(--gold-light)]" role="status">{message}</p> : null}
     </div>
   );
 }

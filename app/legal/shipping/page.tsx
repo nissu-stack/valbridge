@@ -1,2 +1,8 @@
 import { InfoPage } from "@/components/content/info-page";
-export default function ShippingPage() { return <InfoPage eyebrow="Customer care" title="Shipping information" intro="Delivery options depend on destination, product type, season, and customs requirements." sections={[{ title: "Fresh products", body: "Fresh and temperature-sensitive goods may require express delivery and destination-specific import checks. Final availability is confirmed during checkout or directly by our team." }, { title: "Customs and duties", body: "International customers should review local import requirements. Duties, taxes, restrictions, and clearance timing may vary by destination." }]} />; }
+
+export default function ShippingPage() {
+  return <InfoPage eyebrow="Kundenservice" title="Versandinformationen" intro="Lieferoptionen richten sich nach Zielort, Produktart, Saison und Zollanforderungen." sections={[
+    { title: "Frische Produkte", body: "Frische und temperaturempfindliche Waren können eine Expresslieferung und zielortspezifische Einfuhrprüfungen erfordern. Die endgültige Verfügbarkeit wird beim Checkout oder direkt durch unser Team bestätigt." },
+    { title: "Zoll und Abgaben", body: "Internationale Kunden sollten die lokalen Einfuhrbestimmungen prüfen. Zölle, Steuern, Einschränkungen und Abfertigungszeiten können je nach Zielort variieren." },
+  ]} />;
+}

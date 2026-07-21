@@ -1,2 +1,8 @@
 import { InfoPage } from "@/components/content/info-page";
-export default function PrivacyPage() { return <InfoPage eyebrow="Legal" title="Privacy policy" intro="Information about personal-data processing for this storefront." sections={[{ title: "Approval required", body: "Before launch, publish a counsel-reviewed policy covering Shopify, hosting, analytics, payments, communications, retention, international transfers, and customer rights." }, { title: "Data requests", body: "Add the responsible privacy contact and the process for access, correction, deletion, objection, and other applicable requests." }]} />; }
+
+export default function PrivacyPage() {
+  return <InfoPage eyebrow="Rechtliches" title="Datenschutzerklärung" intro="Informationen zur Verarbeitung personenbezogener Daten in diesem Onlineshop." sections={[
+    { title: "Freigabe erforderlich", body: "Vor der Veröffentlichung ist eine rechtlich geprüfte Erklärung zu Shopify, Hosting, Analyse, Zahlungen, Kommunikation, Aufbewahrung, internationalen Übermittlungen und Kundenrechten bereitzustellen." },
+    { title: "Datenschutzanfragen", body: "Die verantwortliche Datenschutzkontaktstelle und das Verfahren für Auskunft, Berichtigung, Löschung, Widerspruch und weitere anwendbare Rechte sind zu ergänzen." },
+  ]} />;
+}

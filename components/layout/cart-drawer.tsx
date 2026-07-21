@@ -78,13 +78,13 @@ export function CartDrawer() {
     try {
       const result = await removeCartLine(lineId);
       if (result.userErrors.length || !result.cart) {
-        setRemoveError(result.userErrors[0]?.message ?? "Unable to remove this item.");
+        setRemoveError(result.userErrors[0]?.message ?? "Dieser Artikel konnte nicht entfernt werden.");
         return;
       }
 
       setCart(result.cart);
     } catch {
-      setRemoveError("Unable to remove this item. Please try again.");
+      setRemoveError("Dieser Artikel konnte nicht entfernt werden. Bitte versuchen Sie es erneut.");
     } finally {
       setRemovingLineId(null);
     }
@@ -110,10 +110,10 @@ export function CartDrawer() {
       >
         <div className="flex min-h-[92px] items-center justify-between border-b border-[var(--line-soft)] px-5 py-5 sm:px-6">
           <div>
-            <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-[var(--gold)]">Your selection</p>
-            <h2 id="cart-panel-title" className="mt-1 font-display text-xl uppercase tracking-[0.12em] text-[var(--gold-pale)]">Shopping bag</h2>
+            <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-[var(--gold)]">Ihre Auswahl</p>
+            <h2 id="cart-panel-title" className="mt-1 font-display text-xl uppercase tracking-[0.12em] text-[var(--gold-pale)]">Warenkorb</h2>
           </div>
-          <button ref={closeButtonRef} type="button" onClick={closeDrawer} className="inline-flex h-11 w-11 items-center justify-center border border-[var(--line)] text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)]" aria-label="Close cart">
+          <button ref={closeButtonRef} type="button" onClick={closeDrawer} className="inline-flex h-11 w-11 items-center justify-center border border-[var(--line)] text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)]" aria-label="Warenkorb schliessen">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -123,16 +123,16 @@ export function CartDrawer() {
             <div className="flex h-16 w-16 items-center justify-center border border-[var(--line)] bg-[var(--panel)]">
               <ShoppingBag className="h-7 w-7 text-[var(--gold)]" strokeWidth={1.5} />
             </div>
-            <h3 className="mt-6 font-display text-xl uppercase tracking-[0.08em] text-[var(--gold-pale)]">Your bag is empty</h3>
-            <p className="mt-3 max-w-xs text-sm leading-6 text-[var(--mut)]">Explore the collection and add something exceptional to your order.</p>
+            <h3 className="mt-6 font-display text-xl uppercase tracking-[0.08em] text-[var(--gold-pale)]">Ihr Warenkorb ist leer</h3>
+            <p className="mt-3 max-w-xs text-sm leading-6 text-[var(--mut)]">Entdecken Sie die Kollektion und ergänzen Sie Ihre Bestellung um etwas Aussergewöhnliches.</p>
             <Link href="/shop" onClick={closeDrawer} className="site-button site-button--primary mt-7">
-              Continue shopping <ArrowRight className="h-4 w-4" />
+              Weiter einkaufen <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between border-b border-[var(--line-soft)] bg-[var(--coal)] px-5 py-4 text-xs uppercase tracking-[0.16em] sm:px-6">
-              <span className="text-[var(--mut)]">{totalCount} item{totalCount === 1 ? "" : "s"}</span>
+              <span className="text-[var(--mut)]">{totalCount} Artikel</span>
               <span className="font-medium text-[var(--gold-light)]">{currentCart ? formatMoney(currentCart.cost.totalAmount) : null}</span>
             </div>
 
@@ -147,7 +147,7 @@ export function CartDrawer() {
                       onClick={() => handleRemoveLine(line.id)}
                       disabled={removingLineId === line.id}
                       className="absolute right-5 top-5 inline-flex h-8 w-8 items-center justify-center border border-[var(--line-soft)] text-[var(--mut)] transition hover:border-[var(--gold)] hover:text-[var(--gold-light)] disabled:cursor-wait disabled:opacity-50 sm:right-6"
-                      aria-label={`Remove ${line.merchandise.product.title} from cart`}
+                      aria-label={`${line.merchandise.product.title} aus dem Warenkorb entfernen`}
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -162,7 +162,7 @@ export function CartDrawer() {
                           className="h-full w-full object-cover transition duration-500 hover:scale-[1.03]"
                         />
                       ) : (
-                        <span className="flex h-full items-center justify-center text-xs text-[var(--mut)]">No image</span>
+                        <span className="flex h-full items-center justify-center text-xs text-[var(--mut)]">Kein Bild</span>
                       )}
                     </Link>
                     <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5 pr-10">
@@ -176,7 +176,7 @@ export function CartDrawer() {
                       </div>
                       <div className="mt-4 flex items-end justify-between gap-3">
                         <span className="text-sm font-medium text-[var(--gold-light)]">{formatMoney({ amount: String(Number(line.merchandise.price.amount) * line.quantity), currencyCode: line.merchandise.price.currencyCode })}</span>
-                        <span className="text-xs uppercase tracking-[0.12em] text-[var(--mut)]">Qty {line.quantity}</span>
+                        <span className="text-xs uppercase tracking-[0.12em] text-[var(--mut)]">Menge {line.quantity}</span>
                       </div>
                     </div>
                   </article>
@@ -186,23 +186,23 @@ export function CartDrawer() {
 
             <div className="border-t border-[var(--line)] bg-[var(--coal)] px-5 py-5 sm:px-6">
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase tracking-[0.16em] text-[var(--mut)]">Subtotal</span>
+                <span className="text-xs uppercase tracking-[0.16em] text-[var(--mut)]">Zwischensumme</span>
                 <span className="font-display text-lg font-medium text-[var(--gold-pale)]">{currentCart ? formatMoney(currentCart.cost.subtotalAmount) : null}</span>
               </div>
-              <p className="mt-2 text-xs leading-5 text-[var(--mut)]">Taxes and delivery are calculated securely at checkout.</p>
+              <p className="mt-2 text-xs leading-5 text-[var(--mut)]">Steuern und Lieferung werden beim sicheren Checkout berechnet.</p>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <Link
                   href="/cart"
                   onClick={closeDrawer}
                   className="site-button site-button--secondary w-full"
                 >
-                  View cart
+                  Warenkorb ansehen
                 </Link>
                 <a
                   href={currentCart?.checkoutUrl}
                   className="site-button site-button--primary w-full"
                 >
-                  Checkout
+                  Zur Kasse
                 </a>
               </div>
             </div>

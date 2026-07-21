@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
     url: "/",
-    images: [{ url: "/logo.png", width: 180, height: 180, alt: `${SITE_NAME} logo` }],
+    images: [{ url: "/logo.png", width: 180, height: 180, alt: `Logo von ${SITE_NAME}` }],
   },
   twitter: {
     card: "summary",
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${cinzel.variable} ${cormorant.variable} ${jost.variable}`}>
+    <html lang="de-CH" suppressHydrationWarning className={`${cinzel.variable} ${cormorant.variable} ${jost.variable}`}>
       <body suppressHydrationWarning className="min-h-screen bg-[var(--obsidian)] text-[var(--cream)]">
-        <a href="#main-content" className="sr-only z-[100] rounded bg-[var(--gold)] px-4 py-2 text-[var(--obsidian)] focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
+        <a href="#main-content" className="sr-only z-[100] rounded bg-[var(--gold)] px-4 py-2 text-[var(--obsidian)] focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Zum Inhalt springen</a>
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
           <div className="flex-1">{children}</div>

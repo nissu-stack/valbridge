@@ -1,18 +1,20 @@
 export default function ProductLoading() {
   return (
-    <main className="mx-auto flex max-w-7xl flex-col gap-8 px-6 pb-10 pt-28 lg:px-8">
-      <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-4">
-          <div className="h-96 w-full animate-pulse rounded-2xl bg-[var(--panel2)]" />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="h-64 animate-pulse rounded-2xl bg-[var(--panel2)]" />
-            <div className="h-64 animate-pulse rounded-2xl bg-[var(--panel2)]" />
+    <main className="min-h-screen bg-[var(--panel)] px-5 pb-16 pt-[116px] sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-[1240px] animate-pulse gap-12 lg:grid-cols-[minmax(0,1.12fr)_minmax(360px,0.88fr)] lg:gap-20">
+        <div className="grid gap-4 sm:grid-cols-[72px_minmax(0,1fr)]">
+          <div className="hidden space-y-3 sm:block">
+            {Array.from({ length: 4 }).map((_, index) => <div key={index} className="h-[88px] bg-[var(--graphite)]" />)}
           </div>
+          <div className="aspect-[4/5] bg-[var(--panel2)]" />
         </div>
-        <div className="space-y-4">
-          <div className="h-8 w-2/3 animate-pulse rounded bg-[var(--panel2)]" />
-          <div className="h-6 w-1/3 animate-pulse rounded bg-[var(--panel2)]" />
-          <div className="h-32 animate-pulse rounded-2xl bg-[var(--panel2)]" />
+        <div className="space-y-6 pt-3">
+          <div className="h-3 w-36 bg-[var(--graphite)]" />
+          <div className="h-14 w-4/5 bg-[var(--graphite)]" />
+          <div className="h-8 w-36 bg-[var(--graphite)]" />
+          <div className="h-24 w-full bg-[var(--graphite)]" />
+          <div className="h-12 w-full bg-[var(--graphite)]" />
+          <div className="h-12 w-full bg-[var(--gold-deep)]" />
         </div>
       </div>
     </main>

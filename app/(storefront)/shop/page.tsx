@@ -22,9 +22,9 @@ type ShopPageCollectionsQueryData = {
 };
 
 const shopPromises = [
-  { icon: Sparkles, title: "Curated quality", copy: "Exceptional ingredients, selected with care." },
-  { icon: Truck, title: "Careful delivery", copy: "Packed to protect flavour and freshness." },
-  { icon: ShieldCheck, title: "Secure checkout", copy: "Simple, protected and dependable." },
+  { icon: Sparkles, title: "Kuratierte Qualität", copy: "Aussergewöhnliche Zutaten, sorgfältig ausgewählt." },
+  { icon: Truck, title: "Sorgfältige Lieferung", copy: "Verpackt zum Schutz von Aroma und Frische." },
+  { icon: ShieldCheck, title: "Sicherer Checkout", copy: "Einfach, geschützt und zuverlässig." },
 ] as const;
 
 function getProductSortArgs(sort?: string) {
@@ -55,7 +55,7 @@ function sortProducts(products: Product[], sort?: string) {
 
 export const metadata: Metadata = {
   title: "Shop",
-  description: "Shop Maison Valbridge truffles, saffron, olive oil and refined pantry essentials.",
+  description: "Entdecken Sie Trüffel, Safran, Olivenöl und ausgewählte Feinkost von Maison Valbridge.",
 };
 
 export default async function ShopPage({ searchParams }: { searchParams?: Promise<{ category?: string; sort?: string; page?: string }> }) {
@@ -82,7 +82,7 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
     : undefined;
 
   let products: Product[] = defaultProductsData.products.nodes;
-  let selectedTitle = "All products";
+  let selectedTitle = "Alle Produkte";
 
   if (activeCollection) {
     const collectionProductsData = await shopifyClient.request<CollectionQueryData>(COLLECTION_QUERY, {
@@ -125,23 +125,23 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(201,150,43,0.16),transparent_34%),linear-gradient(115deg,rgba(255,255,255,0.025),transparent_55%)]" aria-hidden="true" />
         <div className="relative mx-auto grid max-w-[1240px] gap-8 px-5 py-9 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)] lg:items-center lg:px-8 lg:py-11">
           <div className="max-w-3xl">
-            <p className="eyebrow">Maison Valbridge · Fine foods</p>
+            <p className="eyebrow">Maison Valbridge · Feinkost</p>
             <h1 className="mt-2 font-display text-[clamp(2rem,4vw,3.25rem)] font-medium uppercase leading-[1.08] tracking-[0.08em] text-[var(--gold-pale)]">
-              The collection
+              Die Kollektion
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-6 text-[var(--mist)] sm:text-base">
-              Exceptional ingredients for considered kitchens.
+              Aussergewöhnliche Zutaten für anspruchsvolle Küchen.
             </p>
           </div>
 
           <div className="lg:border-l lg:border-[var(--line)] lg:pl-8">
-            <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--gold-light)]">Search products</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--gold-light)]">Produkte suchen</p>
             <form action="/search" method="get" className="mt-3">
-              <label htmlFor="shop-search" className="sr-only">Search products</label>
+              <label htmlFor="shop-search" className="sr-only">Produkte suchen</label>
               <div className="flex items-center border-b border-[var(--line-bright)] pb-3 transition focus-within:border-[var(--gold-light)]">
                 <Search className="mr-3 h-5 w-5 shrink-0 text-[var(--gold)]" aria-hidden="true" />
-                <input id="shop-search" name="q" type="search" placeholder="What are you looking for?" className="min-w-0 flex-1 bg-transparent text-sm text-[var(--cream)] outline-none placeholder:text-[var(--text-faint)]" />
-                <button type="submit" className="ml-3 inline-flex h-10 w-10 shrink-0 items-center justify-center bg-[var(--gold)] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold-light)]" aria-label="Submit search">
+                <input id="shop-search" name="q" type="search" placeholder="Wonach suchen Sie?" className="min-w-0 flex-1 bg-transparent text-sm text-[var(--cream)] outline-none placeholder:text-[var(--text-faint)]" />
+                <button type="submit" className="ml-3 inline-flex h-10 w-10 shrink-0 items-center justify-center bg-[var(--gold)] text-[var(--obsidian)] transition hover:bg-[var(--gold-light)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--gold-light)]" aria-label="Suche absenden">
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
@@ -153,10 +153,10 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
       <section id="collection" aria-labelledby="collection-heading" className="mx-auto max-w-[1240px] px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
         <div className="grid gap-7 border-y border-[var(--line-soft)] py-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div>
-            <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--gold)]">Now viewing</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--gold)]">Aktuelle Auswahl</p>
             <h2 id="collection-heading" className="mt-1.5 font-display text-2xl uppercase tracking-[0.07em] text-[var(--gold-pale)] sm:text-3xl">{selectedTitle}</h2>
             <p className="mt-2 text-sm text-[var(--mut)]">
-              {totalProducts ? `Showing ${pageStart + 1}–${Math.min(pageStart + products.length, totalProducts)} of ${totalProducts} products` : "No products in this collection"}
+              {totalProducts ? `${pageStart + 1}–${Math.min(pageStart + products.length, totalProducts)} von ${totalProducts} Produkten` : "Keine Produkte in dieser Kollektion"}
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -177,16 +177,16 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
           </div>
         ) : (
           <div className="border-y border-[var(--line-soft)] py-16 text-center">
-            <h3 className="font-display text-2xl text-[var(--gold-pale)]">No products found</h3>
-            <p className="mx-auto mt-3 max-w-md text-[var(--mut)]">This collection is currently being refreshed. Explore the complete range instead.</p>
+            <h3 className="font-display text-2xl text-[var(--gold-pale)]">Keine Produkte gefunden</h3>
+            <p className="mx-auto mt-3 max-w-md text-[var(--mut)]">Diese Kollektion wird derzeit aktualisiert. Entdecken Sie stattdessen das gesamte Sortiment.</p>
             <Link href="/shop#collection" className="mt-6 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-[var(--gold-light)] hover:text-[var(--gold-pale)]">
-              View all products <ArrowRight className="h-4 w-4" />
+              Alle Produkte ansehen <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         )}
       </section>
 
-      <section aria-label="Shopping benefits" className="border-y border-[var(--line-soft)] bg-[var(--coal)]">
+      <section aria-label="Vorteile beim Einkauf" className="border-y border-[var(--line-soft)] bg-[var(--coal)]">
         <div className="mx-auto grid max-w-[1240px] divide-y divide-[var(--line-soft)] px-5 sm:px-6 md:grid-cols-3 md:divide-x md:divide-y-0 lg:px-8">
           {shopPromises.map(({ icon: Icon, title, copy }) => (
             <div key={title} className="flex items-center gap-4 py-7 md:px-6 md:first:pl-0 md:last:pr-0">

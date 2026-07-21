@@ -11,10 +11,10 @@ export function HomeProductShowcase({ products }: HomeProductShowcaseProps) {
     <section className="px-4 py-[clamp(70px,9vw,120px)] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1240px]">
         <div className="mb-[clamp(38px,6vw,64px)] text-center">
-          <span className="eyebrow">Collection 2026</span>
-          <h2 className="section-title">Our products</h2>
+          <span className="eyebrow">Kollektion 2026</span>
+          <h2 className="section-title">Unsere Produkte</h2>
           <p className="section-lead mx-auto">
-            Selected directly from the finest truffle regions and saffron fields of the world.
+            Direkt aus den besten Trüffelregionen und Safranfeldern der Welt ausgewählt.
           </p>
           <div className="bridge-rule justify-center">
             <svg width="46" height="16" viewBox="0 0 46 16" fill="none" aria-hidden="true">
@@ -33,7 +33,7 @@ export function HomeProductShowcase({ products }: HomeProductShowcaseProps) {
             href="/shop"
             className="site-button site-button--primary"
           >
-            View more products
+            Weitere Produkte ansehen
           </Link>
         </div>
       </div>

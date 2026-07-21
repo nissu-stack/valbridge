@@ -23,7 +23,7 @@ export function HomeHeroSection({ siteName }: HomeHeroSectionProps) {
       <div className="relative z-10 mx-auto flex min-h-[calc(100svh-240px)] max-w-[900px] flex-col items-center justify-center">
         <Image
           src="/logo.png"
-          alt={`${siteName} logo`}
+          alt={`Logo von ${siteName}`}
           width={120}
           height={110}
           priority
@@ -36,24 +36,24 @@ export function HomeHeroSection({ siteName }: HomeHeroSectionProps) {
           G R O U P
         </div>
         <p className="mx-auto mt-[30px] max-w-[620px] font-serif text-[clamp(1.15rem,2.3vw,1.55rem)] italic text-[var(--mist)]">
-          Fresh truffles, exquisite saffron and Italian fine foods – from one of Europe’s leading suppliers, serving clients around the world.
+          Frische Trüffel, erlesener Safran und italienische Feinkost – von einem der führenden europäischen Anbieter für Kunden weltweit.
         </p>
         <div className="mt-[44px] flex flex-wrap justify-center gap-0">
-          <span className="border-r border-[var(--line)] px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)] last:border-r-0">Truffles</span>
-          <span className="border-r border-[var(--line)] px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)] last:border-r-0">Saffron</span>
-          <span className="border-r border-[var(--line)] px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)] last:border-r-0">Fine Foods</span>
-          <span className="px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)]">Global Trust</span>
+          <span className="border-r border-[var(--line)] px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)] last:border-r-0">Trüffel</span>
+          <span className="border-r border-[var(--line)] px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)] last:border-r-0">Safran</span>
+          <span className="border-r border-[var(--line)] px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)] last:border-r-0">Feinkost</span>
+          <span className="px-[22px] text-[0.72rem] uppercase tracking-[0.34em] text-[var(--gold-light)]">Weltweites Vertrauen</span>
         </div>
         <div className="mt-[48px] flex flex-wrap justify-center gap-[18px]">
           <Link href="/shop" className="gold-btn">
-            Shop now
+            Jetzt einkaufen
           </Link>
           <Link href="/wholesale" className="ghost-btn">
-            Wholesale inquiry
+            Grosshandelsanfrage
           </Link>
         </div>
         <p className="mt-[58px] text-[0.68rem] uppercase tracking-[0.3em] text-[var(--text-faint)]">
-          Swiss Quality · Global Excellence
+          Schweizer Qualität · Weltweite Exzellenz
         </p>
       </div>
     </section>

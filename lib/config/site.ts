@@ -5,7 +5,7 @@ const normalizedSiteUrl = configuredSiteUrl
 
 export const SITE_URL = normalizedSiteUrl.replace(/\/$/, "");
 export const SITE_NAME = process.env.SITE_NAME ?? "Maison Valbridge";
-export const SITE_DESCRIPTION = "Swiss-curated fresh truffles, saffron, olive oils, and fine foods for private customers and hospitality professionals worldwide.";
+export const SITE_DESCRIPTION = "In der Schweiz kuratierte frische Trüffel, Safran, Olivenöle und Feinkost für Privatkunden und Gastronomieprofis weltweit.";
 
 export function absoluteUrl(path = "/") {
   return new URL(path, `${SITE_URL}/`).toString();

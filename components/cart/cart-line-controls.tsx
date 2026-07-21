@@ -18,25 +18,25 @@ export function CartLineControls({ lineId, quantity }: { lineId: string; quantit
       try {
         const result = await operation();
         if (result.userErrors.length || !result.cart) {
-          setError(result.userErrors[0]?.message ?? "Unable to update the cart.");
+          setError(result.userErrors[0]?.message ?? "Der Warenkorb konnte nicht aktualisiert werden.");
           return;
         }
         setCart(result.cart);
         router.refresh();
       } catch {
-        setError("Unable to update the cart. Please try again.");
+        setError("Der Warenkorb konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.");
       }
     });
   };
 
   return (
     <div>
-      <div className={`inline-grid h-11 grid-cols-[42px_48px_42px] border border-[var(--line)] bg-[var(--panel)] transition ${isPending ? "opacity-55" : ""}`} aria-label="Quantity" aria-busy={isPending}>
+      <div className={`inline-grid h-11 grid-cols-[42px_48px_42px] border border-[var(--line)] bg-[var(--panel)] transition ${isPending ? "opacity-55" : ""}`} aria-label="Menge" aria-busy={isPending}>
         <button
           type="button"
           disabled={isPending}
           onClick={() => run(() => updateCartLine(lineId, quantity - 1))}
-          aria-label="Decrease quantity"
+          aria-label="Menge verringern"
           className="inline-flex items-center justify-center text-[var(--mut)] transition hover:bg-[rgba(201,150,43,0.09)] hover:text-[var(--gold-light)] focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait"
         >
           <Minus className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -48,7 +48,7 @@ export function CartLineControls({ lineId, quantity }: { lineId: string; quantit
           type="button"
           disabled={isPending || quantity >= 99}
           onClick={() => run(() => updateCartLine(lineId, quantity + 1))}
-          aria-label="Increase quantity"
+          aria-label="Menge erhöhen"
           className="inline-flex items-center justify-center text-[var(--mut)] transition hover:bg-[rgba(201,150,43,0.09)] hover:text-[var(--gold-light)] focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--gold)] disabled:cursor-wait disabled:opacity-40"
         >
           <Plus className="h-3.5 w-3.5" strokeWidth={1.75} />
